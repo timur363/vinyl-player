@@ -2,7 +2,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
     <!-- APP & CORE                                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
-    <string name="app_name">KittyTune</string>
+    <string name="app_name">VinylTune</string>
     <string name="msg_retrying">Đang thử lại&#8230;</string>
     <string name="success_generic">Thành công</string>
     <string name="error_generic">Đã xảy ra lỗi</string>

@@ -3,7 +3,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
     <!-- APP & CORE                                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
-    <string name="app_name">KittyTune</string>
+    <string name="app_name">VinylTune</string>
     <string name="msg_retrying">Újrapróbálkozás&#8230;</string>
     <string name="success_generic">Sikeres művelet</string>
     <string name="error_generic">Hiba történt</string>

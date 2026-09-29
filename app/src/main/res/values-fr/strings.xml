@@ -3,7 +3,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
     <!-- APP & CORE                                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
-    <string name="app_name">KittyTune</string>
+    <string name="app_name">VinylTune</string>
     <string name="msg_retrying">Nouvelle tentative&#8230;</string>
     <string name="success_generic">Opération réussie</string>
     <string name="error_generic">Une erreur est survenue</string>

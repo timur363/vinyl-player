@@ -846,7 +846,7 @@ class PlayerPreferences(context: Context) {
     fun getPureBlack(): Boolean = prefs.getBoolean(KEY_PURE_BLACK, false)
     fun setPureBlack(enabled: Boolean) = prefs.edit { putBoolean(KEY_PURE_BLACK, enabled) }
     fun getPlayerStyle(): PlayerBackgroundStyle {
-        val n = prefs.getString(KEY_PLAYER_STYLE, PlayerBackgroundStyle.APPLE_MUSIC.name); return try {
+        val n = prefs.getString(KEY_PLAYER_STYLE, PlayerBackgroundStyle.GRADIENT.name); return try {
             PlayerBackgroundStyle.valueOf(n!!)
         } catch (_: Exception) {
             PlayerBackgroundStyle.APPLE_MUSIC
@@ -956,7 +956,7 @@ class PlayerPreferences(context: Context) {
         awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
 
-    fun getBottomMenuBlurEnabled(): Boolean = prefs.getBoolean(KEY_BOTTOM_MENU_BLUR, true)
+    fun getBottomMenuBlurEnabled(): Boolean = prefs.getBoolean(KEY_BOTTOM_MENU_BLUR, false)
     fun setBottomMenuBlurEnabled(enabled: Boolean) = prefs.edit { putBoolean(KEY_BOTTOM_MENU_BLUR, enabled) }
 
     fun getStopOnTaskClear(): Boolean = prefs.getBoolean(KEY_STOP_ON_TASK_CLEAR, true)

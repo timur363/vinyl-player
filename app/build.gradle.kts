@@ -22,11 +22,13 @@ extensions.configure<ApplicationExtension> {
     ndkVersion = "27.1.12297006"
 
     defaultConfig {
-        applicationId = "com.alananasss.kittytune"
+        // Own app id so Vinyl Player installs next to KittyTune / the Yandex mod.
+        applicationId = "io.github.timur363.vinyl"
         minSdk = 26
         targetSdk = 37
-        versionCode = 53
-        versionName = "2.67.0"
+        // Set by CI from the git tag (v1.2.3); these are the local defaults.
+        versionCode = (project.findProperty("vinylVersionCode") as String?)?.toInt() ?: 1
+        versionName = (project.findProperty("vinylVersionName") as String?) ?: "0.0.1-dev"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -43,6 +45,14 @@ extensions.configure<ApplicationExtension> {
     }
 
     signingConfigs {
+        // Permanent key kept in the repo so every build (CI or local) can be
+        // installed over the previous one without losing data.
+        create("vinyl") {
+            storeFile = rootProject.file("signing/vinyl-release.jks")
+            storePassword = "vinylplayer"
+            keyAlias = "vinyl"
+            keyPassword = "vinylplayer"
+        }
         create("release") {
             val storeFilePath = localProperties.getProperty("RELEASE_STORE_FILE")
             if (!storeFilePath.isNullOrEmpty() && file(storeFilePath).exists()) {
@@ -56,11 +66,10 @@ extensions.configure<ApplicationExtension> {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            val releaseSigning = signingConfigs.getByName("release")
-            if (releaseSigning.storeFile?.exists() == true) {
-                signingConfig = releaseSigning
-            }
+            // R8 on: optimized Compose/AndroidX code is much smoother than the
+            // unoptimized build upstream ships. Rules in proguard-rules.pro.
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("vinyl")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

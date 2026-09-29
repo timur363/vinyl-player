@@ -1,0 +1,162 @@
+name: Build
+
+# Every push to main: build the APK, launch it on an Android emulator to make
+# sure it starts without crashing, then publish it as a GitHub Release.
+# The in-app updater reads the latest release of this repository.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERSION_NAME: 1.0.${{ github.run_number }}
+  VERSION_CODE: ${{ github.run_number }}
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Android SDK licenses and NDK
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;27.1.12297006" > /dev/null
+
+      - name: Build release APK
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleRelease -x lintVitalRelease --stacktrace \
+            -PvinylVersionName=$VERSION_NAME -PvinylVersionCode=$VERSION_CODE 2>&1 | tee build.log
+
+      - name: Report build errors
+        if: failure()
+        run: |
+          # Surface the interesting part of the log as annotations so it can be
+          # read from the run summary / check-run API.
+          grep -nE "^e: |error:|ERROR|FAILED|What went wrong|Missing class|Caused by" build.log | head -60 | while IFS= read -r line; do
+            echo "::error title=build::${line//%/%25}"
+          done
+          tail -80 build.log | while IFS= read -r line; do echo "::warning title=build-tail::${line//%/%25}"; done
+
+      - name: Collect APK
+        run: |
+          mkdir -p out
+          cp app/build/outputs/apk/release/*.apk out/VinylTune-$VERSION_NAME.apk
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: out/*.apk
+
+  smoke-test:
+    name: Launch test on emulator
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: out
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Write test script
+        run: |
+          cat > smoke.sh <<'EOF'
+          set -x
+          PKG=io.github.timur363.vinyl
+          adb install -r -g out/*.apk
+          adb logcat -c
+          adb shell am start -W -n $PKG/com.alananasss.kittytune.MainActivity
+          sleep 30
+          adb shell input tap 540 1200
+          sleep 10
+          adb exec-out screencap -p > screen.png || true
+          adb logcat -d > logcat.txt || true
+          adb logcat -d -b crash > crash.txt || true
+          if [ -z "$(adb shell pidof $PKG)" ] || grep -q "FATAL EXCEPTION" crash.txt logcat.txt; then
+            echo "APP_CRASHED" > result.txt
+          else
+            echo "APP_OK" > result.txt
+          fi
+          EOF
+
+      - name: Run app on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash smoke.sh
+
+      - name: Check result
+        run: |
+          cat result.txt
+          if grep -q APP_CRASHED result.txt; then
+            grep -nE "FATAL EXCEPTION|AndroidRuntime|Caused by|at com\.alananasss|Exception" crash.txt logcat.txt | head -80 | while IFS= read -r line; do
+              echo "::error title=crash::${line//%/%25}"
+            done
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test
+          path: |
+            screen.png
+            logcat.txt
+            crash.txt
+
+  release:
+    name: Publish release
+    needs: smoke-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: out
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION_NAME }}
+          target_commitish: ${{ github.sha }}
+          name: VinylTune ${{ env.VERSION_NAME }}
+          body: |
+            ${{ github.event.head_commit.message }}
+
+            Установка: скачай APK ниже и открой его на телефоне.
+          files: out/*.apk
+          make_latest: true

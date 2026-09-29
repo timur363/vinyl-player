@@ -5,7 +5,7 @@
     <!-- APP & CORE                                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
 
-    <string name="app_name">KittyTune</string>
+    <string name="app_name">VinylTune</string>
     <string name="msg_retrying">Retrying&#8230;</string>
     <string name="success_generic">Success</string>
     <string name="error_generic">Something went wrong</string>
