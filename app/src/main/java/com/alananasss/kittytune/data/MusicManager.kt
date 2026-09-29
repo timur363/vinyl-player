@@ -1,0 +1,1457 @@
+/**
+ * Developed by Jason-Marshall Fastner, Germany <jasonfastner@protonmail.com>
+ * Questions, feedback, or beat-matching debates? Feel free to reach out via email!
+ * 
+ * Note: Cats always land on their feet, and with this engine, your transitions will too.
+ */
+package com.alananasss.kittytune.data
+
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.PlaybackParameters
+import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.datasource.DataSpec
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.ResolvingDataSource
+import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.audio.AudioSink
+import androidx.media3.exoplayer.audio.DefaultAudioSink
+import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
+import androidx.media3.exoplayer.drm.DefaultDrmSessionManagerProvider
+import androidx.media3.exoplayer.drm.DrmSessionManager
+import androidx.media3.exoplayer.drm.DrmSessionManagerProvider
+import androidx.media3.exoplayer.drm.FrameworkMediaDrm
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import com.alananasss.kittytune.data.network.RetrofitClient
+import kotlinx.coroutines.isActive
+import com.alananasss.kittytune.data.local.AppDatabase
+import com.alananasss.kittytune.domain.Track
+import com.alananasss.kittytune.domain.User
+import com.alananasss.kittytune.ui.player.AudioEffectsState
+import com.alananasss.kittytune.ui.player.PlaybackContext
+import com.alananasss.kittytune.ui.player.audio.EightDAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.FxAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.ReverbAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.EarrapeAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.MonoAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.R128AudioProcessor
+import com.alananasss.kittytune.ui.player.audio.VintageMp3AudioProcessor
+import com.alananasss.kittytune.ui.player.audio.VocalRemoverAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.VocalBoostAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.FlangerAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.PartyNextDoorAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.SuperWideAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.VinylLoFiAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.PhaserAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.MegaphoneRadioAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.RobotVocoderAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.ChorusAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.UnderwaterAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.TranceGateAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.PingPongDelayAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.ChiptuneAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.ShimmerReverbAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.RotarySpeakerAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.TapeSaturationAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.SubOctaverAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.EmptyMallAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.GramophoneAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.ReverseEchoAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.StadiumAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.CassetteWalkmanAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.AsmrVocalAudioProcessor
+import com.alananasss.kittytune.ui.player.audio.NightDriveAudioProcessor
+import com.alananasss.kittytune.ui.player.EqualizerState
+import com.alananasss.kittytune.ui.player.audio.EqualizerAudioProcessor
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.delay
+import com.alananasss.kittytune.data.local.PlayerPreferences
+import android.os.HandlerThread
+import java.io.IOException
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+
+object MusicManager {
+
+    /**
+     * How long a requested transition may take to reach [crossfadeToMediaItem].
+     *
+     * Generous enough to cover stream resolution including its two retries (~3.6s of
+     * backoff plus the requests themselves) on a slow connection.
+     */
+    private const val CROSSFADE_REQUEST_TIMEOUT_MS = 20_000L
+
+    /** How long the crossfade ramp waits on an incoming player that is trying, but not playing. */
+    private const val CROSSFADE_STALL_TIMEOUT_MS = 10_000L
+
+    /** Ramp steps between two drift measurements during a beat-locked crossfade. */
+    private const val DRIFT_CHECK_STEPS = 16
+
+    /** How long to wait for a freshly started deck to actually render before phase locking. */
+    private const val PHASE_LOCK_READY_TIMEOUT_MS = 3_000L
+
+    /** How long to wait for the renderer to resume after a correction seek. */
+    private const val PHASE_LOCK_SETTLE_TIMEOUT_MS = 800L
+
+    /** Correction seeks allowed before falling back to the drift nudge. */
+    private const val PHASE_LOCK_MAX_SEEKS = 3
+
+    private var _player1: ExoPlayer? = null
+    private var _player2: ExoPlayer? = null
+    private var activePlayerIndex = 1
+
+    var lastPlayer: ExoPlayer? = null
+    val onPlayerSwappedFlow = MutableStateFlow(0)
+
+    private val _isCrossfadingOut = MutableStateFlow(false)
+
+    /** Observable mirror of [isCrossfadingOut], for UI that has to react to the transition. */
+    val isCrossfadingOutFlow = _isCrossfadingOut.asStateFlow()
+
+    /**
+     * True from the moment a transition is requested until the crossfade has finished.
+     *
+     * Backed by a flow rather than a plain field so Compose re-reads it: the automix badge
+     * used to sample it as an ordinary `var`, which never invalidated the composition, so
+     * the badge kept showing a transition that had long finished.
+     */
+    var isCrossfadingOut: Boolean
+        get() = _isCrossfadingOut.value
+        set(value) {
+            _isCrossfadingOut.value = value
+            if (!value) {
+                crossfadeRequestWatchdog?.cancel()
+                crossfadeRequestWatchdog = null
+            }
+        }
+
+    private var crossfadeRequestWatchdog: Job? = null
+    private var fadingPlayer: ExoPlayer? = null
+
+    /**
+     * Identifies each transition, and counts the ones still running.
+     *
+     * Ownership cannot be judged by which player is fading: the two players alternate, so after
+     * two transitions the oldPlayer of a stale coroutine is the oldPlayer of the live one again,
+     * and the stale one tears down a transition it no longer owns. A number that only ever goes
+     * up cannot be mistaken that way.
+     *
+     * [liveTransitions] carries the invariant that matters more: the latch is held while at least
+     * one transition is running and released the moment the last one ends. Releasing it only from
+     * the owning coroutine left no one to release it when that coroutine lost ownership - and the
+     * request watchdog could not step in either, because it waits for a fadingPlayer that the same
+     * coroutine was supposed to clear. With both paths blocked the latch stayed set, and a track
+     * that ended after that never advanced, because advancing is gated on the latch being clear.
+     */
+    private var transitionSeq = 0L
+    private var liveTransitions = 0
+
+    /** Decks of the crossfade currently in flight, so it can be torn down from the outside. */
+    private var activeCrossfadeIncoming: ExoPlayer? = null
+    private var activeCrossfadeOutgoing: ExoPlayer? = null
+
+    /**
+     * Aborts a crossfade that is still in flight, for when the listener skips away from the track
+     * the transition was fading into. Bumping [transitionSeq] makes the fade loop break on its next
+     * step; because that also makes the loop's `finally` believe it has been superseded, the player
+     * hand-over is completed here instead - otherwise the incoming deck would be left at a partial
+     * volume and the outgoing one would keep playing. No-op when no crossfade is running.
+     */
+    fun cancelCrossfade() {
+        crossfadeRequestWatchdog?.cancel()
+        crossfadeRequestWatchdog = null
+        transitionSeq++
+        val incoming = activeCrossfadeIncoming
+        val outgoing = activeCrossfadeOutgoing ?: fadingPlayer
+        activeCrossfadeIncoming = null
+        activeCrossfadeOutgoing = null
+        try {
+            incoming?.volume = 1f
+            outgoing?.volume = 0f
+            outgoing?.playWhenReady = false
+            outgoing?.stop()
+            outgoing?.clearMediaItems()
+            if (_player2 != null) {
+                val inactive = if (activePlayerIndex == 1) _player2 else _player1
+                if (inactive != null && inactive != player) {
+                    inactive.volume = 0f
+                    inactive.playWhenReady = false
+                    inactive.stop()
+                    inactive.clearMediaItems()
+                }
+            }
+        } catch (_: Exception) {
+        }
+        fadingPlayer = null
+        isCrossfadingOut = false
+        releasePrebuffered()
+    }
+
+    /**
+     * Latches [isCrossfadingOut] for a transition that has been decided on but not started yet.
+     *
+     * The caller sets the latch before it resolves the next track's stream, and everything
+     * that drives automix - the beat countdown, the prebuffer, the trigger itself - is gated
+     * on the latch being clear. Only [crossfadeToMediaItem] used to clear it again, so every
+     * path that gives up before reaching it (an unresolvable stream, an empty queue, a radio
+     * fetch that returns nothing, a cancelled play job) left the latch stuck and automix
+     * silently stopped working for the rest of the session. The watchdog clears a latch that
+     * no transition ever claimed; once [crossfadeToMediaItem] runs, its own coroutine owns it.
+     */
+    fun beginCrossfadeRequest() {
+        isCrossfadingOut = true
+        val seqAtRequest = transitionSeq
+        crossfadeRequestWatchdog?.cancel()
+        crossfadeRequestWatchdog = scope.launch {
+            delay(CROSSFADE_REQUEST_TIMEOUT_MS)
+            if (transitionSeq == seqAtRequest && liveTransitions == 0 && _isCrossfadingOut.value) {
+                Log.w(
+                    "MusicManager",
+                    "Crossfade request timed out after ${CROSSFADE_REQUEST_TIMEOUT_MS}ms without a transition; clearing latch"
+                )
+                _isCrossfadingOut.value = false
+            }
+            crossfadeRequestWatchdog = null
+        }
+    }
+
+    private var exoPlayerFactory: ((Int) -> ExoPlayer)? = null
+    private var playerListener: Player.Listener? = null
+
+    val player: ExoPlayer
+        get() = if (activePlayerIndex == 1) _player1!! else getOrInitPlayer2()
+
+    private fun getOrInitPlayer2(): ExoPlayer {
+        if (_player2 == null) {
+            _player2 = exoPlayerFactory?.invoke(1)
+            _player2?.setSeekParameters(SeekParameters.EXACT)
+            playerListener?.let { _player2?.addListener(it) }
+        }
+        return _player2!!
+    }
+
+    var currentTrack: Track? = null
+
+    // Stores the licenseAuthToken per trackId for DRM-protected streams
+    private val drmTokenCache = ConcurrentHashMap<Long, String>()
+
+    /** Store a DRM license token for a track */
+    fun putDrmToken(trackId: Long, token: String) {
+        drmTokenCache[trackId] = token
+    }
+
+    /** Retrieve the DRM license token for a track (if any) */
+    fun getDrmToken(trackId: Long): String? {
+        return drmTokenCache[trackId]
+    }
+
+    private val _contextFlow = MutableStateFlow<PlaybackContext?>(null)
+    val contextFlow = _contextFlow.asStateFlow()
+
+    fun updateContext(context: PlaybackContext?) {
+        _contextFlow.value = context
+    }
+
+    private val _trackUpdatedFlow = MutableSharedFlow<Track>(extraBufferCapacity = 1)
+    val trackUpdatedFlow = _trackUpdatedFlow.asSharedFlow()
+
+    private val _trackDeletedFlow = MutableSharedFlow<Long>(extraBufferCapacity = 1)
+    val trackDeletedFlow = _trackDeletedFlow.asSharedFlow()
+
+    private val _playlistDeletedFlow = MutableSharedFlow<Long>(extraBufferCapacity = 1)
+    val playlistDeletedFlow = _playlistDeletedFlow.asSharedFlow()
+
+    val currentLyricsFlow = MutableStateFlow<List<com.alananasss.kittytune.ui.player.lyrics.LyricLine>>(emptyList())
+    @Volatile var lyricsOffsetMs: Long = 0L
+
+    fun updateTrackMetadata(updatedTrack: Track) {
+        if (currentTrack?.id == updatedTrack.id) {
+            currentTrack = updatedTrack
+            val artist = updatedTrack.displayArtist.ifBlank { updatedTrack.user?.username ?: "Unknown" }
+            val mediaMetadata = androidx.media3.common.MediaMetadata.Builder()
+                .setTitle(updatedTrack.title ?: "Unknown")
+                .setArtist(artist)
+                .setSubtitle(artist)
+                .setIsPlayable(true)
+                .setMediaType(androidx.media3.common.MediaMetadata.MEDIA_TYPE_MUSIC)
+                .setArtworkUri(if (updatedTrack.artworkUrl != null) android.net.Uri.parse(updatedTrack.artworkUrl) else null)
+                .apply {
+                    updatedTrack.publisherMetadata?.albumTitle?.takeIf { it.isNotBlank() }?.let { setAlbumTitle(it) }
+                }
+                .build()
+            try {
+                player.currentMediaItem?.let { currentMediaItem ->
+                    val updatedMediaItem = currentMediaItem.buildUpon()
+                        .setMediaMetadata(mediaMetadata)
+                        .build()
+                    player.replaceMediaItem(player.currentMediaItemIndex, updatedMediaItem)
+                }
+            } catch (_: Exception) {}
+        }
+        _trackUpdatedFlow.tryEmit(updatedTrack)
+    }
+
+    fun notifyTrackDeleted(trackId: Long) {
+        _trackDeletedFlow.tryEmit(trackId)
+    }
+
+    fun notifyPlaylistDeleted(playlistId: Long) {
+        _playlistDeletedFlow.tryEmit(playlistId)
+    }
+
+    var onTrackChange: ((Track) -> Unit)? = null
+
+    private var preloadedTrack: Track? = null
+
+    private val eightDProcessors = listOf(EightDAudioProcessor(), EightDAudioProcessor())
+    private val fxProcessors = listOf(FxAudioProcessor(), FxAudioProcessor())
+    private val reverbProcessors = listOf(ReverbAudioProcessor(), ReverbAudioProcessor())
+    private val earrapeProcessors = listOf(EarrapeAudioProcessor(), EarrapeAudioProcessor())
+    private val monoProcessors = listOf(MonoAudioProcessor(), MonoAudioProcessor())
+    private val normalizerProcessors = listOf(R128AudioProcessor(), R128AudioProcessor())
+    private val vintageMp3Processors = listOf(VintageMp3AudioProcessor(), VintageMp3AudioProcessor())
+    private val vocalRemoverProcessors = listOf(VocalRemoverAudioProcessor(), VocalRemoverAudioProcessor())
+    private val vocalBoostProcessors = listOf(VocalBoostAudioProcessor(), VocalBoostAudioProcessor())
+    private val flangerProcessors = listOf(FlangerAudioProcessor(), FlangerAudioProcessor())
+    private val partyNextDoorProcessors = listOf(PartyNextDoorAudioProcessor(), PartyNextDoorAudioProcessor())
+    private val superWideProcessors = listOf(SuperWideAudioProcessor(), SuperWideAudioProcessor())
+    private val vinylLoFiProcessors = listOf(VinylLoFiAudioProcessor(), VinylLoFiAudioProcessor())
+    private val phaserProcessors = listOf(PhaserAudioProcessor(), PhaserAudioProcessor())
+    private val megaphoneProcessors = listOf(MegaphoneRadioAudioProcessor(), MegaphoneRadioAudioProcessor())
+    private val robotVocoderProcessors = listOf(RobotVocoderAudioProcessor(), RobotVocoderAudioProcessor())
+    private val chorusProcessors = listOf(ChorusAudioProcessor(), ChorusAudioProcessor())
+    private val underwaterProcessors = listOf(UnderwaterAudioProcessor(), UnderwaterAudioProcessor())
+    private val tranceGateProcessors = listOf(TranceGateAudioProcessor(), TranceGateAudioProcessor())
+    private val pingPongDelayProcessors = listOf(PingPongDelayAudioProcessor(), PingPongDelayAudioProcessor())
+    private val chiptuneProcessors = listOf(ChiptuneAudioProcessor(), ChiptuneAudioProcessor())
+    private val shimmerReverbProcessors = listOf(ShimmerReverbAudioProcessor(), ShimmerReverbAudioProcessor())
+    private val rotarySpeakerProcessors = listOf(RotarySpeakerAudioProcessor(), RotarySpeakerAudioProcessor())
+    private val tapeSaturationProcessors = listOf(TapeSaturationAudioProcessor(), TapeSaturationAudioProcessor())
+    private val subOctaverProcessors = listOf(SubOctaverAudioProcessor(), SubOctaverAudioProcessor())
+    private val emptyMallProcessors = listOf(EmptyMallAudioProcessor(), EmptyMallAudioProcessor())
+    private val gramophoneProcessors = listOf(GramophoneAudioProcessor(), GramophoneAudioProcessor())
+    private val reverseEchoProcessors = listOf(ReverseEchoAudioProcessor(), ReverseEchoAudioProcessor())
+    private val stadiumProcessors = listOf(StadiumAudioProcessor(), StadiumAudioProcessor())
+    private val cassetteWalkmanProcessors = listOf(CassetteWalkmanAudioProcessor(), CassetteWalkmanAudioProcessor())
+    private val asmrVocalProcessors = listOf(AsmrVocalAudioProcessor(), AsmrVocalAudioProcessor())
+    private val nightDriveProcessors = listOf(NightDriveAudioProcessor(), NightDriveAudioProcessor())
+    private val equalizerProcessors = listOf(EqualizerAudioProcessor(), EqualizerAudioProcessor())
+    private val automixDuckProcessors = listOf(
+        com.alananasss.kittytune.audio.automix.AutomixDuckAudioProcessor(),
+        com.alananasss.kittytune.audio.automix.AutomixDuckAudioProcessor()
+    )
+    private val djStemProcessors = listOf(
+        com.alananasss.kittytune.audio.automix.DjStemAudioProcessor(),
+        com.alananasss.kittytune.audio.automix.DjStemAudioProcessor()
+    )
+    private var hapticProcessors: List<com.alananasss.kittytune.audio.haptics.HapticAudioProcessor>? = null
+    private var appContext: Context? = null
+
+    var onNextClick: (() -> Unit)? = null
+    var onPreviousClick: (() -> Unit)? = null
+    private var rainPlayer: RainPlayer? = null
+    private val scope = CoroutineScope(Dispatchers.Main)
+
+    fun init(context: Context) {
+        if (_player1 != null) return
+
+        appContext = context.applicationContext
+        com.alananasss.kittytune.audio.automix.AutomixManager.init(context)
+        val haptics = listOf(
+            com.alananasss.kittytune.audio.haptics.HapticAudioProcessor(context.applicationContext),
+            com.alananasss.kittytune.audio.haptics.HapticAudioProcessor(context.applicationContext)
+        )
+        hapticProcessors = haptics
+
+        rainPlayer = RainPlayer(context.applicationContext)
+
+        val prefs = PlayerPreferences(context)
+        val lastContext = prefs.getLastContext()
+        _contextFlow.value = lastContext
+
+        val tokenManager = com.alananasss.kittytune.data.TokenManager(context.applicationContext)
+        val token = com.alananasss.kittytune.data.SessionManager.harvestStoredSession(context.applicationContext) ?: tokenManager.getAccessToken()
+        val customUserAgent = "SoundCloud/2025.12.10-release (Android 10; Android)"
+
+        val httpDataSourceFactory = androidx.media3.datasource.DefaultHttpDataSource.Factory()
+            .setUserAgent(customUserAgent)
+            .setAllowCrossProtocolRedirects(true)
+
+        val defaultDataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
+        val deezerAwareDataSourceFactory = com.alananasss.kittytune.audio.providers.deezer.DeezerAudioAwareDataSourceFactory(defaultDataSourceFactory)
+
+        val resolvingDataSourceFactory = ResolvingDataSource.Factory(deezerAwareDataSourceFactory, object : ResolvingDataSource.Resolver {
+            override fun resolveDataSpec(dataSpec: DataSpec): DataSpec {
+                val uri = dataSpec.uri
+
+                if (uri.scheme == "soundtune" && uri.host == "track") {
+                    val trackId = uri.lastPathSegment?.toLongOrNull()
+
+                    if (trackId != null) {
+                        var streamUrl: String? = null
+
+                        try {
+                            runBlocking(Dispatchers.IO) {
+                                try {
+                                    val db = AppDatabase.getDatabase(context).downloadDao()
+                                    val localTrack = db.getTrack(trackId)
+                                    if (localTrack != null && localTrack.localAudioPath.isNotEmpty()) {
+                                        if (localTrack.localAudioPath.startsWith("exo_cache://")) {
+                                            // Format: exo_cache://trackId::streamUrl::licenseAuthToken
+                                            val parts = localTrack.localAudioPath.removePrefix("exo_cache://").split("::", limit = 3)
+                                            val parsedTrackId = parts[0].toLongOrNull()
+                                            val cachedStreamUrl = parts.getOrNull(1)
+                                            val token = parts.getOrNull(2)
+
+                                            if (parsedTrackId != null && !cachedStreamUrl.isNullOrEmpty()) {
+                                                streamUrl = cachedStreamUrl
+                                            }
+                                        } else {
+                                            val isContentUri = localTrack.localAudioPath.startsWith("content://")
+                                            val fileExists = if (isContentUri) true else java.io.File(localTrack.localAudioPath).exists()
+                                            if (fileExists) {
+                                                streamUrl = localTrack.localAudioPath
+                                            }
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+
+                                if (streamUrl == null) {
+                                    try {
+                                        var trackToResolve = if (currentTrack?.id == trackId) currentTrack
+                                        else if (preloadedTrack?.id == trackId) preloadedTrack
+                                        else null
+
+                                        val hasMediaInfo = trackToResolve?.media?.transcodings?.isNotEmpty() == true
+
+                                        if ((trackToResolve == null || !hasMediaInfo) && trackId > 0) {
+                                            val api = RetrofitClient.create(context)
+                                            val tracks = api.getTracksByIds(trackId.toString())
+                                            val fetchedTrack = tracks.firstOrNull()
+
+                                            if (fetchedTrack != null) {
+                                                trackToResolve = fetchedTrack
+                                                if (currentTrack?.id == trackId) currentTrack = fetchedTrack
+                                                preloadedTrack = fetchedTrack
+                                            }
+                                        }
+
+                                        if (trackToResolve != null) {
+                                            preloadedTrack = trackToResolve
+                                            val resolved = StreamResolver.resolveStreamWithDrm(context, trackToResolve)
+                                            streamUrl = resolved?.url
+
+                                            // Store DRM token if present
+                                            if (resolved?.isDrmProtected == true && resolved.licenseAuthToken != null) {
+                                                putDrmToken(trackId, resolved.licenseAuthToken)
+                                                Log.d("MusicManager", "DRM token cached for track $trackId")
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                            }
+                        } catch (t: Throwable) {
+                            Log.w("MusicManager", "Resolution cancelled or interrupted: ${t.message}")
+                        }
+
+                        val finalUrl = streamUrl
+                        if (finalUrl != null) {
+                            val uri = if (finalUrl.contains("://")) {
+                                Uri.parse(finalUrl)
+                            } else {
+                                Uri.fromFile(java.io.File(finalUrl))
+                            }
+                            return dataSpec.buildUpon().setUri(uri).build()
+                        }
+                    }
+                }
+                return dataSpec
+            }
+        })
+
+        // DRM session manager provider that handles CENC-protected SoundCloud streams.
+        // SoundCloud uses CBCS-encrypted HLS where PSSH data is embedded in the init segments,
+        // not in the MediaItem/manifest. We use multiSession so ExoPlayer discovers PSSH
+        // from the segments instead of pre-acquiring sessions (which causes MissingSchemeDataException).
+        val drmSessionManagerProvider = object : DrmSessionManagerProvider {
+            override fun get(mediaItem: MediaItem): DrmSessionManager {
+                var finalKeySetId: ByteArray? = null
+                var finalToken: String? = null
+                val trackId = mediaItem.mediaId.toLongOrNull()
+
+                if (trackId != null) {
+                    finalToken = getDrmToken(trackId)
+
+                    // Check if track is downloaded (offline)
+                    try {
+                        runBlocking(Dispatchers.IO) {
+                            val db = AppDatabase.getDatabase(context).downloadDao()
+                            val localTrack = db.getTrack(trackId)
+                            if (localTrack != null && localTrack.localAudioPath.startsWith("exo_cache://")) {
+                                val parts = localTrack.localAudioPath.removePrefix("exo_cache://").split("::", limit = 3)
+                                val tokenStr = parts.getOrNull(2)
+                                if (!tokenStr.isNullOrEmpty()) {
+                                    finalKeySetId = android.util.Base64.decode(tokenStr, android.util.Base64.NO_WRAP)
+                                }
+                            }
+                        }
+                    } catch (e: Exception) { e.printStackTrace() }
+                }
+
+                if (finalKeySetId != null) {
+                    Log.d("MusicManager", "Using offline Widevine license for track $trackId")
+                    val manager = DefaultDrmSessionManager.Builder()
+                        .setUuidAndExoMediaDrmProvider(
+                            androidx.media3.common.C.WIDEVINE_UUID,
+                            FrameworkMediaDrm.DEFAULT_PROVIDER
+                        )
+                        .build(androidx.media3.exoplayer.drm.LocalMediaDrmCallback(ByteArray(0)))
+                    manager.setMode(DefaultDrmSessionManager.MODE_PLAYBACK, finalKeySetId)
+                    return manager
+                } else if (finalToken != null) {
+                    Log.d("MusicManager", "Creating streaming Widevine DRM session for track $trackId")
+                    val callback = SoundCloudDrmCallback(finalToken)
+                    return DefaultDrmSessionManager.Builder()
+                        .setUuidAndExoMediaDrmProvider(
+                            androidx.media3.common.C.WIDEVINE_UUID,
+                            FrameworkMediaDrm.DEFAULT_PROVIDER
+                        )
+                        .setMultiSession(true)
+                        .build(callback)
+                }
+
+                // Fallback to default which handles offline keySetIds automatically!
+                return androidx.media3.exoplayer.drm.DefaultDrmSessionManagerProvider().get(mediaItem)
+            }
+        }
+
+        val cache = com.alananasss.kittytune.data.local.ExoCacheManager.getCache(context)
+        val cacheDataSourceFactory = androidx.media3.datasource.cache.CacheDataSource.Factory()
+            .setCache(cache)
+            .setUpstreamDataSourceFactory(resolvingDataSourceFactory)
+            .setFlags(androidx.media3.datasource.cache.CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+
+        val createExoPlayer = { index: Int ->
+            ExoPlayer.Builder(context.applicationContext)
+                .setMediaSourceFactory(
+                    DefaultMediaSourceFactory(context)
+                        .setDataSourceFactory(cacheDataSourceFactory)
+                        .setDrmSessionManagerProvider(drmSessionManagerProvider)
+                )
+                .setRenderersFactory(
+                    object : DefaultRenderersFactory(context) {
+                        override fun buildAudioSink(context: Context, enableFloatOutput: Boolean, enableAudioTrackPlaybackParams: Boolean): AudioSink {
+                            val hapticProc = hapticProcessors?.getOrNull(index) ?: com.alananasss.kittytune.audio.haptics.HapticAudioProcessor(context)
+                            val duckProc = automixDuckProcessors.getOrNull(index) ?: com.alananasss.kittytune.audio.automix.AutomixDuckAudioProcessor()
+                            val stemProc = djStemProcessors.getOrNull(index) ?: com.alananasss.kittytune.audio.automix.DjStemAudioProcessor()
+                            return DefaultAudioSink.Builder(context)
+                                .setAudioProcessors(arrayOf(hapticProc, duckProc, stemProc, equalizerProcessors[index], vocalRemoverProcessors[index], vocalBoostProcessors[index], tapeSaturationProcessors[index], subOctaverProcessors[index], chorusProcessors[index], flangerProcessors[index], phaserProcessors[index], rotarySpeakerProcessors[index], robotVocoderProcessors[index], tranceGateProcessors[index], underwaterProcessors[index], partyNextDoorProcessors[index], emptyMallProcessors[index], superWideProcessors[index], pingPongDelayProcessors[index], reverseEchoProcessors[index], fxProcessors[index], reverbProcessors[index], shimmerReverbProcessors[index], eightDProcessors[index], earrapeProcessors[index], monoProcessors[index], normalizerProcessors[index], vinylLoFiProcessors[index], gramophoneProcessors[index], megaphoneProcessors[index], chiptuneProcessors[index], vintageMp3Processors[index]))
+                                .setEnableFloatOutput(enableFloatOutput)
+                                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                                .build()
+                        }
+                    }
+                )
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(C.USAGE_MEDIA)
+                        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                        .build(),
+                    /* handleAudioFocus = */ true
+                )
+                .setHandleAudioBecomingNoisy(true)
+                .setWakeMode(C.WAKE_MODE_NETWORK)
+                .build()
+        }
+
+        this.exoPlayerFactory = createExoPlayer
+        _player1 = createExoPlayer(0)
+        _player1?.setSeekParameters(SeekParameters.EXACT)
+
+        val listener = object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                super.onIsPlayingChanged(isPlaying)
+                if (!isPlaying) {
+                    appContext?.let { com.alananasss.kittytune.audio.haptics.PlayerHapticManager.getInstance(it).stopAllHaptics() }
+                }
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+                if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
+                    appContext?.let { com.alananasss.kittytune.audio.haptics.PlayerHapticManager.getInstance(it).stopAllHaptics() }
+                }
+            }
+
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                super.onMediaItemTransition(mediaItem, reason)
+                appContext?.let { com.alananasss.kittytune.audio.haptics.PlayerHapticManager.getInstance(it).stopAllHaptics() }
+                if (mediaItem == null) return
+
+                if (isCrossfadingOut && fadingPlayer != null) {
+                    if (player.currentMediaItem != mediaItem) {
+                        return
+                    }
+                }
+
+                val rawId = mediaItem.mediaId
+                val cleanIdString = if (rawId.contains(":")) rawId.substringBefore(":") else rawId
+                val trackId = cleanIdString.toLongOrNull() ?: rawId.hashCode().toLong()
+
+                if (preloadedTrack != null && preloadedTrack?.id == trackId) {
+                    currentTrack = preloadedTrack
+                } else if (currentTrack?.id != trackId) {
+                    val meta = mediaItem.mediaMetadata
+                    val source = if (mediaItem.mediaId.startsWith("yt_") || mediaItem.requestMetadata.mediaUri?.toString()?.contains("youtube") == true) "youtube" else "soundcloud"
+
+                    currentTrack = Track(
+                        id = trackId,
+                        title = meta.title?.toString() ?: "Unknown",
+                        durationMs = 0L,
+                        artworkUrl = meta.artworkUri?.toString(),
+                        user = User(0, meta.artist?.toString() ?: "Unknown", null),
+                        permalinkUrl = "",
+                        playbackCount = 0,
+                        likesCount = 0,
+                        repostsCount = 0,
+                        commentCount = 0,
+                        source = source
+                    )
+                }
+
+                currentTrack?.let { track ->
+                    scope.launch {
+                        onTrackChange?.invoke(track)
+                    }
+                }
+            }
+        }
+
+        _player1?.addListener(listener)
+        this.playerListener = listener
+    }
+
+    fun setRepeatMode(mode: Int) {
+        _player1?.repeatMode = mode
+        _player2?.repeatMode = mode
+    }
+
+    data class PrebufferedTransition(
+        val player: ExoPlayer,
+        val trackId: Long,
+        val plan: com.alananasss.kittytune.audio.automix.AutomixPlan?,
+        val basePlaybackParams: PlaybackParameters
+    )
+
+    @Volatile
+    private var prebuffered: PrebufferedTransition? = null
+
+    fun isPrebuffered(trackId: Long): Boolean {
+        val pb = prebuffered ?: return false
+        return pb.trackId == trackId && pb.player.playbackState != Player.STATE_IDLE
+    }
+
+    fun releasePrebuffered() {
+        val pb = prebuffered ?: return
+        prebuffered = null
+        try {
+            pb.player.playWhenReady = false
+            pb.player.stop()
+            pb.player.clearMediaItems()
+        } catch (_: Exception) {}
+    }
+
+    fun prebufferTransition(
+        mediaItem: MediaItem,
+        nextTrack: Track,
+        automixPlan: com.alananasss.kittytune.audio.automix.AutomixPlan? = null
+    ) {
+        if (isCrossfadingOut) return
+        if (isPrebuffered(nextTrack.id)) return
+
+        val inactivePlayer = if (activePlayerIndex == 1) getOrInitPlayer2() else _player1!!
+        try {
+            inactivePlayer.playWhenReady = false
+            inactivePlayer.stop()
+            inactivePlayer.clearMediaItems()
+            inactivePlayer.volume = 0f
+            inactivePlayer.setMediaItem(mediaItem, automixPlan?.incomingStartMs ?: 0L)
+
+            val baseParams = try { inactivePlayer.playbackParameters } catch (_: Exception) { PlaybackParameters.DEFAULT }
+            if (automixPlan != null && (automixPlan.tempoRatio != 1f || automixPlan.pitchRatio != 1f)) {
+                val adjSpeed = (baseParams.speed * automixPlan.tempoRatio).coerceIn(0.5f, 2.0f)
+                val adjPitch = (baseParams.pitch * automixPlan.pitchRatio).coerceIn(0.5f, 2.0f)
+                inactivePlayer.playbackParameters = PlaybackParameters(adjSpeed, adjPitch)
+            } else {
+                inactivePlayer.playbackParameters = baseParams
+            }
+
+            inactivePlayer.prepare()
+            prebuffered = PrebufferedTransition(inactivePlayer, nextTrack.id, automixPlan, baseParams)
+            Log.d("MusicManager", "Prebuffered transition for track ${nextTrack.id} at ${automixPlan?.incomingStartMs ?: 0}ms")
+        } catch (e: Exception) {
+            Log.w("MusicManager", "Failed to prebuffer transition for track ${nextTrack.id}: ${e.message}")
+        }
+    }
+
+    /**
+     * Suspends until [player] is genuinely producing audio, or [timeoutMs] elapses.
+     *
+     * "Not buffering" and "playing" both lie here: right after a seek or a fresh prepare,
+     * ExoPlayer reports the seek target as its position while the renderer has produced
+     * nothing. Only an advancing position proves the playhead is real, which is the
+     * precondition for measuring beat phase against another deck.
+     *
+     * @return true when the deck was observed advancing.
+     */
+    private suspend fun awaitRendering(player: ExoPlayer, timeoutMs: Long): Boolean {
+        val deadline = android.os.SystemClock.elapsedRealtime() + timeoutMs
+        while (android.os.SystemClock.elapsedRealtime() < deadline) {
+            val playing = try { player.isPlaying } catch (_: Exception) { return false }
+            if (playing) {
+                val before = try { player.currentPosition } catch (_: Exception) { return false }
+                delay(30)
+                val after = try { player.currentPosition } catch (_: Exception) { return false }
+                if (after > before) return true
+            } else {
+                delay(20)
+            }
+        }
+        return false
+    }
+
+    fun crossfadeToMediaItem(
+        mediaItem: MediaItem,
+        startPositionMs: Long,
+        crossfadeDurationMs: Long,
+        automixPlan: com.alananasss.kittytune.audio.automix.AutomixPlan? = null,
+        isDjConstantEnergy: Boolean = false,
+        djFlowActive: Boolean = false,
+        djTempoRatio: Float = 1.0f,
+        djPhaseOffsetMs: Long = 0L,
+        outgoingGrid: com.alananasss.kittytune.audio.automix.BeatPhaseLock.Grid? = null,
+        incomingGrid: com.alananasss.kittytune.audio.automix.BeatPhaseLock.Grid? = null
+    ) {
+        val oldPlayer = player
+
+        // Read at transition time rather than cached: this is a user preference, and a crossfade
+        // is the only moment it matters.
+        val isLoopExtensionEnabled = appContext?.let {
+            PlayerPreferences(it).getDjFlowLoopExtension()
+        } ?: false
+
+        while (oldPlayer.mediaItemCount > 1) {
+            try { oldPlayer.removeMediaItem(1) } catch (_: Exception) {}
+        }
+
+        val oldPlayerIndex = if (activePlayerIndex == 1) 0 else 1
+        activePlayerIndex = if (activePlayerIndex == 1) 2 else 1
+        val newPlayerIndex = if (activePlayerIndex == 1) 0 else 1
+        val newPlayer = player
+        newPlayer.repeatMode = oldPlayer.repeatMode
+        oldPlayer.repeatMode = Player.REPEAT_MODE_OFF
+
+        isCrossfadingOut = true
+        // The transition owns the latch from here on, so the request watchdog stands down.
+        crossfadeRequestWatchdog?.cancel()
+        crossfadeRequestWatchdog = null
+        transitionSeq++
+        val myTransition = transitionSeq
+        liveTransitions++
+        fadingPlayer = oldPlayer
+        activeCrossfadeIncoming = newPlayer
+        activeCrossfadeOutgoing = oldPlayer
+
+        lastPlayer = oldPlayer
+        onPlayerSwappedFlow.value += 1
+
+        val pb = prebuffered
+        val effectivePlan = automixPlan ?: pb?.plan
+        val basePlaybackParams: PlaybackParameters
+        val isAdopted: Boolean
+
+        val targetTrackId = mediaItem.mediaId.removePrefix("yt_").toLongOrNull()
+        val effectiveTempoRatio = if (djTempoRatio in 0.90f..1.10f && djTempoRatio != 1.0f) {
+            djTempoRatio
+        } else {
+            effectivePlan?.tempoRatio ?: 1.0f
+        }
+        val synchronizedStartMs = (startPositionMs + (djPhaseOffsetMs * effectiveTempoRatio).toLong()).coerceAtLeast(0L)
+
+        if (pb != null && pb.player == newPlayer && targetTrackId != null && pb.trackId == targetTrackId) {
+            isAdopted = true
+            basePlaybackParams = pb.basePlaybackParams
+            prebuffered = null
+            val djDrivesStartPosition = djFlowActive && (djPhaseOffsetMs != 0L || effectiveTempoRatio != 1.0f)
+            if (djFlowActive && effectiveTempoRatio != 1.0f) {
+                val adjSpeed = (basePlaybackParams.speed * effectiveTempoRatio).coerceIn(0.85f, 1.15f)
+                newPlayer.playbackParameters = PlaybackParameters(adjSpeed, basePlaybackParams.pitch)
+            }
+            if (djDrivesStartPosition) {
+                newPlayer.seekTo(synchronizedStartMs)
+            } else if (kotlin.math.abs(newPlayer.currentPosition - startPositionMs) > 100L) {
+                newPlayer.seekTo(startPositionMs)
+            }
+            Log.d("MusicManager", "Adopted prebuffered player for track $targetTrackId (state=${newPlayer.playbackState})")
+        } else {
+            isAdopted = false
+            releasePrebuffered()
+            newPlayer.playWhenReady = false
+            newPlayer.setMediaItem(mediaItem, synchronizedStartMs)
+            val base = try { newPlayer.playbackParameters } catch (_: Exception) { PlaybackParameters.DEFAULT }
+            basePlaybackParams = base
+            if (djFlowActive && effectiveTempoRatio != 1.0f) {
+                // DJ Flow keeps its ratio inside a deliberately tight band: this is a beat-match
+                // nudge, and the plan's own pitchRatio belongs to the automix path below.
+                val adjSpeed = (base.speed * effectiveTempoRatio).coerceIn(0.85f, 1.15f)
+                newPlayer.playbackParameters = PlaybackParameters(adjSpeed, base.pitch)
+            } else if (effectivePlan != null && (effectivePlan.tempoRatio != 1f || effectivePlan.pitchRatio != 1f)) {
+                val adjSpeed = (base.speed * effectivePlan.tempoRatio).coerceIn(0.5f, 2.0f)
+                val adjPitch = (base.pitch * effectivePlan.pitchRatio).coerceIn(0.5f, 2.0f)
+                newPlayer.playbackParameters = PlaybackParameters(adjSpeed, adjPitch)
+            }
+            newPlayer.prepare()
+        }
+
+        val targetVolume = 1f
+        newPlayer.volume = 0f
+
+        // Initialize DJ Stems: Low-cut incoming track B before opening crossfader to prevent dual-bass collision.
+        // Only DJ Flow drives the stem crossover; a plain crossfade or a shipping automix transition
+        // must keep the incoming deck's low end untouched.
+        if (djFlowActive) {
+            setPlayerStemLevels(oldPlayerIndex, vocal = 1.0f, drum = 1.0f, bass = 1.0f)
+            setPlayerStemLevels(newPlayerIndex, vocal = 1.0f, drum = 1.0f, bass = 0.0f)
+        }
+
+        newPlayer.play()
+
+        if (effectivePlan != null) {
+            com.alananasss.kittytune.audio.automix.AutomixManager.setIsAutomixing(true)
+        }
+
+        val outDuck = automixDuckProcessors.getOrNull(oldPlayerIndex)
+        val inDuck = automixDuckProcessors.getOrNull(newPlayerIndex)
+
+        val playStateSyncListener = object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (isCrossfadingOut && fadingPlayer != null) {
+                    try {
+                        if (isPlaying) {
+                            fadingPlayer?.play()
+                        } else if (!newPlayer.playWhenReady || newPlayer.playbackSuppressionReason != Player.PLAYBACK_SUPPRESSION_REASON_NONE) {
+                            fadingPlayer?.pause()
+                        }
+                    } catch (_: Exception) {}
+                }
+            }
+        }
+        newPlayer.addListener(playStateSyncListener)
+
+        fun equalPowerIn(edge0: Float, edge1: Float, x: Float): Float {
+            val t = ((x - edge0) / (edge1 - edge0)).coerceIn(0f, 1f)
+            return kotlin.math.sin(t * (Math.PI / 2.0).toFloat())
+        }
+        fun equalPowerOut(edge0: Float, edge1: Float, x: Float): Float {
+            val t = ((x - edge0) / (edge1 - edge0)).coerceIn(0f, 1f)
+            return kotlin.math.cos(t * (Math.PI / 2.0).toFloat())
+        }
+
+        scope.launch {
+            try {
+                if (!isAdopted) {
+                    var waitCount = 0
+                    while (newPlayer.playbackState == Player.STATE_BUFFERING && waitCount < 50) {
+                        delay(100)
+                        waitCount++
+                    }
+                }
+
+                // Phase lock. The incoming deck is already rolling but still at volume 0, so a
+                // correction made here is inaudible. It has to happen *now* rather than at seek
+                // time: buffering above can burn hundreds of milliseconds, a compressed-audio
+                // seek lands on a frame boundary, and the renderer starts on a buffer flush.
+                // Every one of those adds an offset that cannot be predicted, only measured -
+                // and 15 ms of it is the difference between one beat and an audible gallop.
+                val phaseLock = com.alananasss.kittytune.audio.automix.BeatPhaseLock
+                val lockBaseSpeed = try {
+                    newPlayer.playbackParameters.speed
+                } catch (_: Exception) {
+                    1f
+                }
+                val canPhaseLock = djFlowActive && outgoingGrid != null && incomingGrid != null &&
+                    outgoingGrid.isUsable && incomingGrid.isUsable
+
+                fun measurePhaseErrorMs(): Double {
+                    if (!canPhaseLock) return 0.0
+                    return try {
+                        val outSpeed = oldPlayer.playbackParameters.speed.takeIf { it > 0.01f } ?: 1f
+                        phaseLock.phaseErrorMs(
+                            outgoing = outgoingGrid!!.deckAt(oldPlayer.currentPosition, outSpeed),
+                            incoming = incomingGrid!!.deckAt(newPlayer.currentPosition, lockBaseSpeed),
+                        )
+                    } catch (_: Exception) {
+                        0.0
+                    }
+                }
+
+                if (canPhaseLock) {
+                    // Measuring is only meaningful once the incoming deck is really rendering.
+                    // Leaving STATE_BUFFERING is not the same thing: for a deck that was not
+                    // prebuffered, currentPosition still reports the seek target while the
+                    // renderer has produced nothing, so the outgoing deck moves on alone and
+                    // every correction chases a target that was never valid.
+                    val rendering = awaitRendering(newPlayer, PHASE_LOCK_READY_TIMEOUT_MS)
+                    var attempt = 0
+                    // Only a prebuffered deck may be seek-corrected. On a deck that is still
+                    // streaming, a seek forces a re-buffer, and the outgoing track keeps running
+                    // through it - so the seek creates roughly as much new phase error as it
+                    // removes and never converges. Measured: 3 seeks left 122 ms of error, while
+                    // a single seek on an adopted deck landed inside 1 ms.
+                    if (rendering && isAdopted) {
+                        // Each seek is itself subject to frame-boundary rounding, so the residual
+                        // is re-measured and corrected until it is inside tolerance.
+                        while (attempt < PHASE_LOCK_MAX_SEEKS && isActive && transitionSeq == myTransition) {
+                            val errorMs = measurePhaseErrorMs()
+                            if (!phaseLock.needsSeek(errorMs)) break
+                            try {
+                                val delta = phaseLock.correctionSeekMs(
+                                    errorMs,
+                                    incomingGrid!!.deckAt(newPlayer.currentPosition, lockBaseSpeed),
+                                )
+                                newPlayer.seekTo((newPlayer.currentPosition + delta).coerceAtLeast(0L))
+                            } catch (_: Exception) {
+                                break
+                            }
+                            attempt++
+                            // Re-measuring before the renderer has resumed would read the seek
+                            // target rather than the playhead and report a false lock.
+                            if (!awaitRendering(newPlayer, PHASE_LOCK_SETTLE_TIMEOUT_MS)) break
+                        }
+                    }
+                    val residual = measurePhaseErrorMs()
+                    Log.d(
+                        "MusicManager",
+                        "Phase lock: residual ${"%.1f".format(residual)} ms after $attempt seek(s)" +
+                            (if (!rendering) " (deck never rendered - lock skipped)"
+                            else if (!isAdopted) " (not prebuffered - nudge only)" else "") +
+                            (if (!phaseLock.isLocked(residual)) " [drift nudge absorbing]" else "")
+                    )
+                }
+
+                val transitionDuration = effectivePlan?.overlapMs ?: crossfadeDurationMs
+                var remainingMs = oldPlayer.duration - oldPlayer.currentPosition
+                if (remainingMs < 0) remainingMs = 0
+
+                val actualCrossfadeMs = if (oldPlayer.isPlaying && remainingMs > 0 && remainingMs < transitionDuration) {
+                    remainingMs
+                } else if (!oldPlayer.isPlaying || remainingMs == 0L) {
+                    0L
+                } else {
+                    transitionDuration
+                }
+
+                if (actualCrossfadeMs <= 0L) {
+                    newPlayer.volume = targetVolume
+                    oldPlayer.playWhenReady = false
+                    oldPlayer.stop()
+                    oldPlayer.clearMediaItems()
+                } else {
+                    // Fine-grained ramp: ~15ms per volume step for ultra-smooth transition
+                    val steps = (actualCrossfadeMs / 15L).toInt().coerceIn(50, 800)
+                    val delayMs = (actualCrossfadeMs / steps).coerceAtLeast(5L)
+
+                    // Where the low end hands over, fixed once at the start of the fade.
+                    //
+                    // The swap belongs on a 16-beat phrase line - that is where the drop sits and
+                    // where a DJ moves the bass fader. Resolving "the next phrase line after
+                    // halfway" does not work: at 160 BPM a phrase is six seconds, so the next one
+                    // is often past the end of the fade. Instead the phrase line nearest the
+                    // middle of the fade is picked, falling back to a bar line and finally to the
+                    // plain midpoint when no usable grid exists.
+                    val fadeStartMs = oldPlayer.currentPosition
+                    val fadeMidMs = fadeStartMs + actualCrossfadeMs / 2
+                    val swapWindowStart = fadeStartMs + (actualCrossfadeMs * 15) / 100
+                    val swapWindowEnd = fadeStartMs + (actualCrossfadeMs * 85) / 100
+                    // Prefer a phrase line, then a bar line, and only then give up and take the
+                    // midpoint. Each candidate has to lie inside the window on its own - clamping
+                    // one into range would land on no musical boundary at all while still looking
+                    // grid-aligned, which is exactly the failure this ordering exists to avoid.
+                    var swapGrid = "midpoint"
+                    val bassSwapAtMs: Long = if (canPhaseLock) {
+                        val phrase = outgoingGrid!!.nearestLineWithin(
+                            fadeMidMs, com.alananasss.kittytune.audio.automix.BeatAnalyzer.BEATS_PER_PHRASE, swapWindowStart, swapWindowEnd
+                        )
+                        val bar = phrase ?: outgoingGrid.nearestLineWithin(
+                            fadeMidMs, com.alananasss.kittytune.audio.automix.BeatAnalyzer.BEATS_PER_BAR, swapWindowStart, swapWindowEnd
+                        )
+                        swapGrid = when {
+                            phrase != null -> "phrase"
+                            bar != null -> "bar"
+                            else -> "midpoint (no line fits the fade)"
+                        }
+                        bar ?: fadeMidMs
+                    } else {
+                        swapGrid = "midpoint (no beat grid)"
+                        fadeMidMs
+                    }
+                    var bassSwapped = false
+                    Log.d(
+                        "MusicManager",
+                        "Bass swap at $bassSwapAtMs ms on $swapGrid " +
+                            "(fade $fadeStartMs..${fadeStartMs + actualCrossfadeMs}, " +
+                            "anchor ${outgoingGrid?.anchorMs}, beat ${"%.1f".format(outgoingGrid?.periodMs ?: 0.0)} ms)"
+                    )
+
+                    for (i in 0..steps) {
+                        if (transitionSeq != myTransition) break
+                        if (!isActive) break
+
+                        // Hold the ramp while the user has playback paused, but never block on a
+                        // player that is not coming back. A superseded transition stops its incoming
+                        // player, so waiting for it to report isPlaying hung this coroutine forever:
+                        // the duck gains stayed applied, the outgoing player was never stopped and
+                        // the automix flag was never cleared, which left the badge lit for good.
+                        var stalledMs = 0L
+                        while (!newPlayer.isPlaying && isActive && transitionSeq == myTransition) {
+                            if (newPlayer.playWhenReady) {
+                                if (stalledMs >= CROSSFADE_STALL_TIMEOUT_MS) break
+                                stalledMs += 100
+                            }
+                            delay(100)
+                        }
+                        // The stall-wait above can also exit because this transition was superseded;
+                        // that is the post-stall re-check. Without it a superseded transition falls
+                        // through and writes the volumes and stem levels of players the newer
+                        // transition now owns.
+                        if (transitionSeq != myTransition) break
+
+                        // Seamless phrase repeat / loop extension: prevent old player from running out
+                        // of audio mid-crossfade. DJ Flow only - replaying the tail of the outro is
+                        // wrong for a plain crossfade, and it follows the loop-extension preference.
+                        if (djFlowActive && isLoopExtensionEnabled &&
+                            oldPlayer.isPlaying && oldPlayer.duration > 4000L &&
+                            oldPlayer.currentPosition >= oldPlayer.duration - 400L
+                        ) {
+                            val loopBack = (oldPlayer.duration - 4000L).coerceAtLeast(0L)
+                            try { oldPlayer.seekTo(loopBack) } catch (_: Exception) {}
+                        }
+
+                        if (oldPlayer.playbackState == Player.STATE_ENDED || oldPlayer.playbackState == Player.STATE_IDLE) {
+                            newPlayer.volume = targetVolume
+                            break
+                        }
+
+                        val progress = i.toFloat() / steps
+                        val fadeOut: Float
+                        val fadeIn: Float
+
+                        if (isDjConstantEnergy) {
+                            // DJ Constant-Energy Club Mix (NO volume dip!)
+                            // Only reachable when DJ Flow is explicitly enabled, so the shipping
+                            // automix curve below is untouched for everyone who does not use it.
+                            fadeOut = if (progress < 0.4f) 1.0f else equalPowerOut(0.4f, 1f, progress)
+                            fadeIn = if (progress > 0.6f) 1.0f else equalPowerIn(0f, 0.6f, progress)
+                        } else if (effectivePlan != null) {
+                            // Fade-out then fade-in with gentle dip (equal power curves) for automix
+                            fadeOut = equalPowerOut(0f, 0.6f, progress)
+                            fadeIn = equalPowerIn(0.4f, 1f, progress)
+                        } else {
+                            // Full-range smooth equal power curves for standard crossfade
+                            fadeOut = kotlin.math.cos(progress * (Math.PI / 2.0).toFloat())
+                            fadeIn = kotlin.math.sin(progress * (Math.PI / 2.0).toFloat())
+                        }
+
+                        newPlayer.volume = targetVolume * fadeIn
+                        oldPlayer.volume = targetVolume * fadeOut
+
+                        // Residual drift correction. Even a locked pair separates slowly when the
+                        // two clocks differ by a fraction of a percent, so the error is re-measured
+                        // and absorbed by a speed nudge well under the audible pitch threshold.
+                        // No seeking here - a seek mid-fade would be heard.
+                        if (canPhaseLock && i % DRIFT_CHECK_STEPS == 0 && i > 0) {
+                            val driftMs = measurePhaseErrorMs()
+                            if (!phaseLock.isLocked(driftMs)) {
+                                try {
+                                    val nudged = phaseLock.nudgeSpeed(
+                                        errorMs = driftMs,
+                                        windowMs = delayMs * DRIFT_CHECK_STEPS,
+                                        baseSpeed = lockBaseSpeed,
+                                        // The quieter the incoming deck still is, the harder it
+                                        // can be pulled without anyone hearing the pitch move.
+                                        maxNudge = phaseLock.nudgeAuthority(fadeIn),
+                                    )
+                                    newPlayer.playbackParameters =
+                                        PlaybackParameters(nudged, newPlayer.playbackParameters.pitch)
+                                } catch (_: Exception) {}
+                            } else if (newPlayer.playbackParameters.speed != lockBaseSpeed) {
+                                try {
+                                    newPlayer.playbackParameters =
+                                        PlaybackParameters(lockBaseSpeed, newPlayer.playbackParameters.pitch)
+                                } catch (_: Exception) {}
+                            }
+                        }
+
+                        if (isDjConstantEnergy) {
+                            // The low-shelf duck stays dry. It used to taper both decks' bass in
+                            // parallel with the stem kill, but the two fought each other: a 150 Hz
+                            // shelf and a 160 Hz crossover with different curves, both acting on
+                            // the same band, gave a low end nobody could predict. Now the
+                            // crossover in DjStemAudioProcessor is the single owner of < 160 Hz.
+                            outDuck?.setMix(0f)
+                            inDuck?.setMix(0f)
+
+                            // Low-end handover. Exactly one deck owns the sub band at any moment:
+                            // two kicks summing in 30-120 Hz carry enough energy to drive the
+                            // limiter into pumping or straight into clipping.
+                            if (!bassSwapped && oldPlayer.currentPosition >= bassSwapAtMs) {
+                                bassSwapped = true
+                            }
+
+                            if (!bassSwapped) {
+                                setPlayerStemLevels(oldPlayerIndex, vocal = 1.0f, drum = 1.0f, bass = 1.0f)
+                                setPlayerStemLevels(newPlayerIndex, vocal = 1.0f, drum = 1.0f, bass = 0.0f)
+                            } else {
+                                setPlayerStemLevels(oldPlayerIndex, vocal = 1.0f, drum = 1.0f, bass = 0.0f)
+                                setPlayerStemLevels(newPlayerIndex, vocal = 1.0f, drum = 1.0f, bass = 1.0f)
+                            }
+                        } else if (effectivePlan != null) {
+                            // Shipping automix keeps its original low-shelf duck ramp; the stem
+                            // crossover above is DJ Flow's mechanism and stays out of this path.
+                            outDuck?.setMix(equalPowerIn(0.45f, 1f, progress))
+                            inDuck?.setMix(1f - equalPowerIn(0f, 0.55f, progress))
+                        }
+
+                        delay(delayMs)
+                    }
+                }
+            } finally {
+                newPlayer.removeListener(playStateSyncListener)
+                // A transition that has been superseded cleans up after itself, but must not tear
+                // down the one that replaced it. The newer crossfade owns fadingPlayer, the latch
+                // and the automix state from the moment it claimed them; clearing those from here
+                // left it believing it no longer owned the transition, so its own outgoing player
+                // was never stopped and both tracks kept playing.
+                val stillOwnsTransition = transitionSeq == myTransition
+                try {
+                    if (stillOwnsTransition) {
+                        newPlayer.volume = targetVolume
+                        oldPlayer.volume = 0f
+                        oldPlayer.playWhenReady = false
+                        oldPlayer.stop()
+                        oldPlayer.clearMediaItems()
+                    }
+                } catch (_: Exception) {}
+
+                outDuck?.resetGain()
+                inDuck?.resetGain()
+                setGlobalStemLevels(1.0f, 1.0f, 1.0f)
+
+                if (effectivePlan != null) {
+                    if (stillOwnsTransition) {
+                        com.alananasss.kittytune.audio.automix.AutomixManager.setIsAutomixing(false)
+                        com.alananasss.kittytune.audio.automix.AutomixManager.clearPlan()
+                    }
+                }
+
+                val currentParams = newPlayer.playbackParameters
+                if (currentParams != basePlaybackParams) {
+                    scope.launch {
+                        val rampSteps = 10
+                        val startSpeed = currentParams.speed
+                        val endSpeed = basePlaybackParams.speed
+                        val startPitch = currentParams.pitch
+                        val endPitch = basePlaybackParams.pitch
+                        for (step in 1..rampSteps) {
+                            delay(200)
+                            if (!isActive) break
+                            val frac = step.toFloat() / rampSteps
+                            val curSpeed = startSpeed + frac * (endSpeed - startSpeed)
+                            val curPitch = startPitch + frac * (endPitch - startPitch)
+                            try {
+                                newPlayer.playbackParameters = PlaybackParameters(curSpeed, curPitch)
+                            } catch (_: Exception) { break }
+                        }
+                    }
+                }
+                if (stillOwnsTransition) {
+                    fadingPlayer = null
+                    // Drop the cancel hook's references once the hand-over is done, so a later
+                    // cancelTransition() cannot reach in and stop the deck that is now playing.
+                    activeCrossfadeIncoming = null
+                    activeCrossfadeOutgoing = null
+                }
+                // The latch is held while a transition is running and released the moment the last
+                // one ends - including when this coroutine was superseded and the one that replaced
+                // it is already gone. Leaving the release to the owner alone is what let the latch
+                // survive every transition and stop the queue advancing.
+                liveTransitions--
+                if (liveTransitions <= 0) {
+                    liveTransitions = 0
+                    fadingPlayer = null
+                    isCrossfadingOut = false
+                }
+            }
+        }
+    }
+
+    fun preloadNext(nextTrack: Track, context: Context) {
+        preloadedTrack = nextTrack
+        val inactivePlayer = if (activePlayerIndex == 1) getOrInitPlayer2() else _player1!!
+        inactivePlayer.playWhenReady = false
+        inactivePlayer.stop()
+        inactivePlayer.clearMediaItems()
+
+        val uri = android.net.Uri.parse("soundtune://track/${nextTrack.id}")
+
+        val artist = nextTrack.displayArtist.ifBlank { nextTrack.user?.username ?: "Unknown" }
+        val mediaMetadata = androidx.media3.common.MediaMetadata.Builder()
+            .setTitle(nextTrack.title ?: "Unknown")
+            .setArtist(artist)
+            .setSubtitle(artist)
+            .setIsPlayable(true)
+            .setMediaType(androidx.media3.common.MediaMetadata.MEDIA_TYPE_MUSIC)
+            .setArtworkUri(if (nextTrack.artworkUrl != null) android.net.Uri.parse(nextTrack.artworkUrl) else null)
+            .apply {
+                nextTrack.publisherMetadata?.albumTitle?.takeIf { it.isNotBlank() }?.let { setAlbumTitle(it) }
+            }
+            .build()
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(uri)
+            .setMediaId(if (nextTrack.source == "youtube") "yt_${nextTrack.id}" else "${nextTrack.id}")
+            .setMediaMetadata(mediaMetadata)
+            .build()
+
+        inactivePlayer.setMediaItem(mediaItem)
+        inactivePlayer.prepare()
+    }
+
+    fun applyEffects(state: AudioEffectsState) {
+        val pitch = if (state.isPitchEnabled) state.speed else 1f
+        _player1?.playbackParameters = PlaybackParameters(state.speed, pitch)
+        _player2?.playbackParameters = PlaybackParameters(state.speed, pitch)
+
+        appContext?.let { ctx ->
+            val hapticMgr = com.alananasss.kittytune.audio.haptics.PlayerHapticManager.getInstance(ctx)
+            hapticMgr.playbackSpeedFactor = state.speed
+            hapticMgr.bassBoostMultiplier = if (state.isBassBoostEnabled) (1.0f + state.bassBoostIntensity * 0.8f) else 1.0f
+        }
+
+        eightDProcessors.forEach {
+            it.setEnabled(state.is8DEnabled)
+            it.setSpeed(state.eightDSpeed)
+        }
+        fxProcessors.forEach {
+            it.setEffects(state.isMuffledEnabled, state.isBassBoostEnabled)
+            it.setBassBoostGain(state.bassBoostIntensity)
+            it.setMuffledCutoff(state.muffledIntensity)
+        }
+        reverbProcessors.forEach {
+            it.setEnabled(state.isReverbEnabled)
+            it.setDecay(state.reverbIntensity)
+        }
+        earrapeProcessors.forEach {
+            it.setEnabled(state.isEarrapeEnabled)
+            it.setIntensity(state.earrapeIntensity)
+        }
+        monoProcessors.forEach {
+            it.setEnabled(state.isMonoEnabled)
+        }
+        normalizerProcessors.forEach {
+            it.setParameters(state.isNormalizationEnabled, state.normalizationLevel)
+        }
+        vintageMp3Processors.forEach {
+            it.setEnabled(state.isVintageMp3Enabled)
+            it.setCompression(state.vintageMp3Compression)
+        }
+        vocalRemoverProcessors.forEach {
+            it.setEnabled(state.isVocalRemoverEnabled)
+            it.setSuppressionLevel(state.vocalRemoverLevel)
+        }
+        vocalBoostProcessors.forEach {
+            it.setEnabled(state.isVocalBoostEnabled)
+            it.setIntensity(state.vocalBoostIntensity)
+        }
+        flangerProcessors.forEach {
+            it.setEnabled(state.isFlangerEnabled)
+            it.setIntensity(state.flangerIntensity)
+            it.setSpeed(state.flangerSpeed)
+        }
+        partyNextDoorProcessors.forEach {
+            it.setEnabled(state.isPartyNextDoorEnabled)
+            it.setIsolation(state.partyNextDoorIsolation)
+            it.setReverb(state.partyNextDoorReverb)
+            it.setBassRumble(state.partyNextDoorBassRumble)
+        }
+        superWideProcessors.forEach {
+            it.setEnabled(state.isSuperWideEnabled)
+            it.setWidth(state.superWideWidth)
+            it.setDepth(state.superWideDepth)
+        }
+        vinylLoFiProcessors.forEach {
+            it.setEnabled(state.isVinylLoFiEnabled)
+            it.setCrackles(state.vinylCrackles)
+            it.setFlutter(state.vinylFlutter)
+        }
+        phaserProcessors.forEach {
+            it.setEnabled(state.isPhaserEnabled)
+            it.setSpeed(state.phaserSpeed)
+            it.setFeedback(state.phaserFeedback)
+        }
+        megaphoneProcessors.forEach {
+            it.setEnabled(state.isMegaphoneEnabled)
+            it.setTone(state.megaphoneTone)
+            it.setDrive(state.megaphoneDrive)
+        }
+        robotVocoderProcessors.forEach {
+            it.setEnabled(state.isRobotVocoderEnabled)
+            it.setFrequency(state.robotFrequency)
+            it.setMix(state.robotMix)
+        }
+        chorusProcessors.forEach {
+            it.setEnabled(state.isChorusEnabled)
+            it.setRate(state.chorusRate)
+            it.setDepth(state.chorusDepth)
+        }
+        underwaterProcessors.forEach {
+            it.setEnabled(state.isUnderwaterEnabled)
+            it.setDepth(state.underwaterDepth)
+            it.setBubbles(state.underwaterBubbles)
+        }
+        tranceGateProcessors.forEach {
+            it.setEnabled(state.isTranceGateEnabled)
+            it.setSpeed(state.tranceGateSpeed)
+            it.setPattern(state.tranceGatePattern)
+            it.setMix(state.tranceGateMix)
+        }
+        pingPongDelayProcessors.forEach {
+            it.setEnabled(state.isPingPongDelayEnabled)
+            it.setDelayTime(state.pingPongDelayTime)
+            it.setFeedback(state.pingPongFeedback)
+        }
+        chiptuneProcessors.forEach {
+            it.setEnabled(state.isChiptuneEnabled)
+            it.setBits(state.chiptuneBits)
+            it.setSampleRateDown(state.chiptuneSampleRate)
+        }
+        shimmerReverbProcessors.forEach {
+            it.setEnabled(state.isShimmerReverbEnabled)
+            it.setSize(state.shimmerSize)
+            it.setShimmerMix(state.shimmerMix)
+        }
+        rotarySpeakerProcessors.forEach {
+            it.setEnabled(state.isRotarySpeakerEnabled)
+            it.setSpeed(state.rotarySpeed)
+            it.setDepth(state.rotaryDepth)
+        }
+        tapeSaturationProcessors.forEach {
+            it.setEnabled(state.isTapeSaturationEnabled)
+            it.setWarmth(state.tapeWarmth)
+            it.setExciter(state.tapeExciter)
+        }
+        subOctaverProcessors.forEach {
+            it.setEnabled(state.isSubOctaverEnabled)
+            it.setSubLevel(state.subOctaverLevel)
+            it.setSubCutoff(state.subOctaverCutoff)
+        }
+        emptyMallProcessors.forEach {
+            it.setEnabled(state.isEmptyMallEnabled)
+            it.setDistance(state.emptyMallDistance)
+            it.setGlassReverb(state.emptyMallReverb)
+        }
+        gramophoneProcessors.forEach {
+            it.setEnabled(state.isGramophoneEnabled)
+            it.setShellacAge(state.gramophoneAge)
+            it.setHornResonance(state.gramophoneHorn)
+        }
+        reverseEchoProcessors.forEach {
+            it.setEnabled(state.isReverseEchoEnabled)
+            it.setTime(state.reverseEchoTime)
+            it.setFeedback(state.reverseEchoFeedback)
+        }
+        stadiumProcessors.forEach {
+            it.setEnabled(state.isStadiumEnabled)
+            it.setStadiumSize(state.stadiumSize)
+            it.setAtmosphere(state.stadiumAtmosphere)
+        }
+        cassetteWalkmanProcessors.forEach {
+            it.setEnabled(state.isWalkmanEnabled)
+            it.setDrive(state.walkmanDrive)
+            it.setTapeHiss(state.walkmanHiss)
+        }
+        asmrVocalProcessors.forEach {
+            it.setEnabled(state.isAsmrVocalEnabled)
+            it.setProximity(state.asmrProximity)
+            it.setAirSheen(state.asmrAir)
+        }
+        nightDriveProcessors.forEach {
+            it.setEnabled(state.isNightDriveEnabled)
+            it.setCabinWidth(state.nightDriveCabin)
+            it.setRoadRumble(state.nightDriveRoad)
+        }
+
+        rainPlayer?.setEnabled(state.isRainEnabled)
+        rainPlayer?.setVolume(state.rainVolume)
+        rainPlayer?.setAmbientType(state.ambientType)
+    }
+
+    fun applyEqualizer(state: EqualizerState) {
+        val gains = state.bandGainsDb.toFloatArray()
+        equalizerProcessors.forEach {
+            it.setParameters(state.isEnabled, state.preampDb, gains)
+        }
+    }
+
+    /**
+     * Updates real-time stem levels (vocals, drum/beat, bass) across both DJ deck players.
+     */
+    fun setGlobalStemLevels(vocal: Float, drum: Float, bass: Float) {
+        djStemProcessors.forEach {
+            it.setStemLevels(vocal = vocal, drum = drum, bass = bass)
+        }
+    }
+
+    /**
+     * Updates real-time stem levels for a specific player deck (0 for Player1, 1 for Player2).
+     */
+    fun setPlayerStemLevels(playerIndex: Int, vocal: Float, drum: Float, bass: Float) {
+        djStemProcessors.getOrNull(playerIndex)?.setStemLevels(vocal = vocal, drum = drum, bass = bass)
+    }
+
+    /**
+     * Automatically cuts bass on the outgoing track right at the drop/transition to eliminate frequency clash.
+     */
+    fun triggerStemDropCut(outgoingPlayerIndex: Int = -1) {
+        val targetIdx = if (outgoingPlayerIndex >= 0) outgoingPlayerIndex else (activePlayerIndex - 1)
+        djStemProcessors.getOrNull(targetIdx)?.triggerDropBassCut()
+    }
+
+    fun releasePlayer() {
+        _player1?.release(); _player1 = null
+        _player2?.release(); _player2 = null
+        fadingPlayer?.release(); fadingPlayer = null
+        rainPlayer?.release()
+        rainPlayer = null
+        drmTokenCache.clear()
+    }
+}

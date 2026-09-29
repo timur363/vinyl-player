@@ -1,0 +1,632 @@
+package com.alananasss.kittytune.data
+
+import android.content.Context
+import android.content.SharedPreferences
+import com.alananasss.kittytune.data.network.RetrofitClient
+import com.alananasss.kittytune.domain.Track
+import com.alananasss.kittytune.data.network.TrackLikeItem
+import com.alananasss.kittytune.data.network.TrackLikeRequest
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
+import java.io.File
+import java.io.FileWriter
+import java.io.FileReader
+import java.io.BufferedWriter
+import java.io.BufferedReader
+import java.lang.reflect.Type
+
+object LikeRepository {
+    private const val PREF_NAME = "soundtune_likes_v3"
+    private const val KEY_LIKED_TRACKS = "liked_tracks_full"
+    private const val KEY_LIKED_PLAYLISTS = "liked_playlists_ids"
+    private const val KEY_LOCALLY_UNLIKED_IDS = "locally_unliked_ids"
+    private const val LIKED_TRACKS_FILE = "liked_tracks_v1.json"
+    private val fileLock = Any()
+
+    private lateinit var prefs: SharedPreferences
+    private lateinit var api: com.alananasss.kittytune.data.network.SoundCloudApi
+    private lateinit var appContext: Context
+    private val gson = com.alananasss.kittytune.utils.AppUtils.gson
+    private var cachedUserId: Long? = null
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    private val _likedTracks = MutableStateFlow<List<Track>>(emptyList())
+    val likedTracks = _likedTracks.asStateFlow()
+
+    private val _likedPlaylists = MutableStateFlow<Set<Long>>(emptySet())
+    val likedPlaylists = _likedPlaylists.asStateFlow()
+
+    private val _isSyncing = MutableStateFlow(false)
+    val isSyncing = _isSyncing.asStateFlow()
+
+    private fun addToBlacklist(trackId: Long) {
+        val current = getBlacklist().toMutableSet()
+        current.add(trackId)
+        prefs.edit().putStringSet(KEY_LOCALLY_UNLIKED_IDS, current.map { it.toString() }.toSet()).apply()
+    }
+
+    private fun removeFromBlacklist(trackId: Long) {
+        val current = getBlacklist().toMutableSet()
+        current.remove(trackId)
+        prefs.edit().putStringSet(KEY_LOCALLY_UNLIKED_IDS, current.map { it.toString() }.toSet()).apply()
+    }
+
+    private fun getBlacklist(): Set<Long> {
+        return prefs.getStringSet(KEY_LOCALLY_UNLIKED_IDS, emptySet())?.mapNotNull { it.toLongOrNull() }?.toSet()
+            ?: emptySet()
+    }
+
+    private lateinit var playerPrefs: com.alananasss.kittytune.data.local.PlayerPreferences
+
+    fun init(context: Context) {
+        appContext = context.applicationContext
+        prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        api = RetrofitClient.create(context)
+        playerPrefs = com.alananasss.kittytune.data.local.PlayerPreferences(context)
+        loadFromStorage()
+        scope.launch {
+            com.alananasss.kittytune.data.sync.SyncLikes.seedMissing()
+            com.alananasss.kittytune.data.sync.SyncLikes.seedMissingPlaylists()
+        }
+    }
+
+    private suspend fun getUserId(): Long? {
+        if (cachedUserId != null) return cachedUserId
+        return try {
+            val me = api.getMe()
+            cachedUserId = me.id
+            me.id
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun addLike(track: Track) {
+        removeFromBlacklist(track.id)
+
+        _likedTracks.update { current ->
+            val safeSource = track.source ?: "soundcloud"
+            if (current.any { it.id == track.id }) {
+                current
+            } else {
+                val newTrack = track.copy(
+                    isLiked = true,
+                    source = safeSource,
+                    likedAt = System.currentTimeMillis()
+                )
+                (listOf(newTrack) + current).sortedByDescending { it.likedAt ?: 0L }
+            }
+        }
+
+        saveLikedTracks()
+        com.alananasss.kittytune.data.sync.SyncLikes.record(track.id, liked = true, track = track)
+
+        scope.launch {
+            if (track.source == "vk") {
+                val vkTokenManager = com.alananasss.kittytune.data.vk.VkTokenManager(appContext)
+                if (vkTokenManager.isLoggedIn()) {
+                    try {
+                        val vkRepo = com.alananasss.kittytune.data.vk.VkRepository.getInstance(appContext)
+                        vkRepo.likeTrack(track)
+                    } catch (e: Exception) {
+                        android.util.Log.e("LikeRepository", "VK track like failed", e)
+                    }
+                }
+                return@launch
+            }
+            if (track.source == "spotify" || track.user?.urn?.startsWith("spotify") == true || (track.permalinkUrl != null && track.permalinkUrl!!.contains("spotify"))) return@launch
+            if (!playerPrefs.getSyncLikesEnabled()) return@launch
+            val tokenManager = TokenManager(appContext)
+            if (tokenManager.isGuestMode()) return@launch
+            val token = tokenManager.getAccessToken()
+            if (!token.isNullOrEmpty()) {
+                try {
+                    val payload = TrackLikeRequest(
+                        likes = listOf(TrackLikeItem("soundcloud:tracks:${track.id}"))
+                    )
+                    val response = api.likeTrack(payload)
+                    if (response.code() == 401) {
+                        com.alananasss.kittytune.data.SessionManager.requestSessionRefresh(appContext, force = true)
+                    }
+                    android.util.Log.d("LikeRepository", "Direct track like success status: ${response.code()}")
+                } catch (e: Exception) {
+                    android.util.Log.e("LikeRepository", "Direct track like failed", e)
+                }
+            }
+        }
+    }
+
+    /**
+     * Bulk-like passes run one after another. A pass that arrived while another was sending used to be
+     * dropped outright — its tracks already showed as liked here but never reached SoundCloud.
+     */
+    private val bulkLikeMutex = kotlinx.coroutines.sync.Mutex()
+
+    /** Same batch size and pacing the guest-transfer path has always used successfully. */
+    private const val BULK_LIKE_BATCH_SIZE = 25
+    private const val BULK_LIKE_BATCH_DELAY_MS = 350L
+    private const val BULK_LIKE_RATE_LIMIT_WAIT_MS = 2_000L
+
+    /**
+     * Likes every track in [tracks] in one pass: a single local update and disk write, then the
+     * SoundCloud call batched 25-per-POST with a pause between batches — never one request per
+     * track, so a whole album cannot look like a burst. VK tracks keep their individual path.
+     * Returns how many tracks were newly liked.
+     */
+    fun addLikesBulk(tracks: List<Track>): Int {
+        val toLike = tracks.filter { !isTrackLiked(it.id) }
+        if (toLike.isEmpty()) return 0
+
+        val now = System.currentTimeMillis()
+        toLike.forEach { removeFromBlacklist(it.id) }
+        _likedTracks.update { current ->
+            val byId = current.associateBy { it.id }.toMutableMap()
+            for (track in toLike) {
+                val safeSource = track.source ?: "soundcloud"
+                byId[track.id] = track.copy(isLiked = true, source = safeSource, likedAt = now)
+            }
+            byId.values.sortedByDescending { it.likedAt ?: 0L }
+        }
+        saveLikedTracks()
+        toLike.forEach { com.alananasss.kittytune.data.sync.SyncLikes.record(it.id, liked = true, track = it) }
+
+        val soundCloudLikeable = toLike.filter { track ->
+            track.id > 0 &&
+                track.source != "spotify" &&
+                track.source != "vk" &&
+                track.user?.urn?.startsWith("spotify") != true &&
+                track.permalinkUrl?.contains("spotify") != true
+        }
+        val vkLikeable = toLike.filter { it.source == "vk" }
+        if (soundCloudLikeable.isEmpty() && vkLikeable.isEmpty()) return toLike.size
+
+        scope.launch {
+            if (!playerPrefs.getSyncLikesEnabled()) return@launch
+            val tokenManager = TokenManager(appContext)
+            if (tokenManager.isGuestMode()) return@launch
+            val token = tokenManager.getAccessToken()
+            if (token.isNullOrEmpty() && vkLikeable.isEmpty()) return@launch
+            bulkLikeMutex.withLock {
+                if (!token.isNullOrEmpty()) {
+                    for (batch in soundCloudLikeable.chunked(BULK_LIKE_BATCH_SIZE)) {
+                        val payload = TrackLikeRequest(
+                            likes = batch.map { TrackLikeItem("soundcloud:tracks:${it.id}") }
+                        )
+                        try {
+                            var response = api.likeTrack(payload)
+                            if (response.code() == 401) {
+                                // Refreshing alone left this batch unsent; send it again on the new session.
+                                com.alananasss.kittytune.data.SessionManager.requestSessionRefresh(appContext, force = true)
+                                delay(BULK_LIKE_RATE_LIMIT_WAIT_MS)
+                                response = api.likeTrack(payload)
+                            }
+                            if (response.code() == 429) {
+                                delay(BULK_LIKE_RATE_LIMIT_WAIT_MS)
+                                response = api.likeTrack(payload)
+                                if (response.code() == 429) break
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.e("LikeRepository", "Bulk like batch failed", e)
+                        }
+                        delay(BULK_LIKE_BATCH_DELAY_MS)
+                    }
+                }
+
+                if (vkLikeable.isNotEmpty()) {
+                    val vkTokenManager = com.alananasss.kittytune.data.vk.VkTokenManager(appContext)
+                    if (vkTokenManager.isLoggedIn()) {
+                        val vkRepo = com.alananasss.kittytune.data.vk.VkRepository.getInstance(appContext)
+                        for (track in vkLikeable) {
+                            try {
+                                vkRepo.likeTrack(track)
+                            } catch (e: Exception) {
+                                android.util.Log.e("LikeRepository", "VK bulk track like failed", e)
+                            }
+                            delay(BULK_LIKE_BATCH_DELAY_MS)
+                        }
+                    }
+                }
+            }
+        }
+        return toLike.size
+    }
+
+    fun removeLike(trackId: Long) {
+        val targetTrack = _likedTracks.value.find { it.id == trackId }
+        val isVk = targetTrack?.source == "vk"
+        val isSpotify = targetTrack?.source == "spotify" || targetTrack?.user?.urn?.startsWith("spotify") == true
+                || (targetTrack?.permalinkUrl != null && targetTrack.permalinkUrl!!.contains("spotify")) || trackId > 1000000000000000L
+
+        addToBlacklist(trackId)
+
+        _likedTracks.update { it.filterNot { t -> t.id == trackId } }
+
+        saveLikedTracks()
+        com.alananasss.kittytune.data.sync.SyncLikes.record(trackId, liked = false, track = null)
+
+        if (isVk) {
+            scope.launch {
+                val vkTokenManager = com.alananasss.kittytune.data.vk.VkTokenManager(appContext)
+                if (vkTokenManager.isLoggedIn() && targetTrack != null) {
+                    try {
+                        val vkRepo = com.alananasss.kittytune.data.vk.VkRepository.getInstance(appContext)
+                        vkRepo.unlikeTrack(targetTrack)
+                    } catch (e: Exception) {
+                        android.util.Log.e("LikeRepository", "VK track unlike failed", e)
+                    }
+                }
+            }
+            return
+        }
+
+        if (isSpotify) return
+
+        scope.launch {
+            if (!playerPrefs.getSyncLikesEnabled()) return@launch
+            val tokenManager = TokenManager(appContext)
+            if (tokenManager.isGuestMode()) return@launch
+            val token = tokenManager.getAccessToken()
+            if (!token.isNullOrEmpty()) {
+                try {
+                    val payload = TrackLikeRequest(
+                        likes = listOf(TrackLikeItem("soundcloud:tracks:$trackId"))
+                    )
+                    val response = api.unlikeTrack(payload)
+                    if (response.code() == 401) {
+                        com.alananasss.kittytune.data.SessionManager.requestSessionRefresh(appContext, force = true)
+                    }
+                    android.util.Log.d("LikeRepository", "Direct track unlike success status: ${response.code()}")
+                } catch (e: Exception) {
+                    android.util.Log.e("LikeRepository", "Direct track unlike failed", e)
+                }
+            }
+        }
+    }
+
+    fun isTrackLiked(trackId: Long): Boolean {
+        return _likedTracks.value.any { it.id == trackId }
+    }
+
+    fun isPlaylistLiked(playlistId: Long): Boolean {
+        return _likedPlaylists.value.contains(playlistId)
+    }
+
+    fun setLikedPlaylists(ids: Set<Long>) {
+        val currentLiked = _likedPlaylists.value
+        val preservedLocalIds = try {
+            val db = com.alananasss.kittytune.data.local.AppDatabase.getDatabase(appContext).downloadDao()
+            val allLocal = kotlinx.coroutines.runBlocking { db.getAllPlaylistsList() }
+            allLocal.filter { local ->
+                currentLiked.contains(local.id) && (local.permalinkUrl?.contains("spotify") == true || local.id < 0 || local.isDownloaded)
+            }.map { it.id }.toSet()
+        } catch (e: Exception) {
+            emptySet()
+        }
+
+        _likedPlaylists.value = ids + preservedLocalIds
+        saveLikedPlaylists()
+    }
+
+    fun togglePlaylistLike(playlistId: Long, isLiked: Boolean, permalink: String? = null, urn: String? = null) {
+        val current = _likedPlaylists.value.toMutableSet()
+        if (isLiked) {
+            current.add(playlistId)
+            DownloadManager.clearDeletedPlaylistId(playlistId)
+        } else {
+            current.remove(playlistId)
+            val isUserCreated = try {
+                val db = com.alananasss.kittytune.data.local.AppDatabase.getDatabase(appContext).downloadDao()
+                val p = kotlinx.coroutines.runBlocking { db.getPlaylist(playlistId) }
+                p?.isUserCreated == true
+            } catch (_: Exception) { false }
+            if (!isUserCreated) {
+                DownloadManager.addDeletedPlaylistId(playlistId)
+            }
+        }
+        _likedPlaylists.value = current
+        DownloadManager.notifyLibraryUpdated()
+        saveLikedPlaylists()
+        com.alananasss.kittytune.data.sync.SyncLikes.recordPlaylist(playlistId, isLiked, permalink, urn)
+
+        scope.launch {
+            if (!isLiked && playlistId > 0) {
+                try {
+                    val db = com.alananasss.kittytune.data.local.AppDatabase.getDatabase(appContext)
+                    val dao = db.downloadDao()
+                    val p = dao.getPlaylist(playlistId)
+                    if (p != null && !p.isDownloaded && !p.isUserCreated) {
+                        dao.deletePlaylist(playlistId)
+                        dao.deletePlaylistRefs(playlistId)
+                        dao.cleanUnreferencedEmptyTracks()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            val safePermalink = permalink ?: ""
+            val isSpotify = safePermalink.contains("spotify.com") || safePermalink.contains("spotify:")
+                    || urn?.startsWith("spotify:") == true || (urn != null && urn.contains("spotify"))
+                    || playlistId == 0L
+            if (isSpotify) {
+                return@launch
+            }
+
+            val tokenManager = com.alananasss.kittytune.data.TokenManager(appContext)
+            if (tokenManager.isGuestMode()) return@launch
+            val token = tokenManager.getAccessToken()
+            if (!token.isNullOrEmpty()) {
+                try {
+                    val targetUrn = urn ?: when {
+                        safePermalink.contains("artist-stations") -> "soundcloud:system-playlists:artist-stations:$playlistId"
+                        safePermalink.contains("track-stations") -> "soundcloud:system-playlists:track-stations:$playlistId"
+                        else -> "soundcloud:playlists:$playlistId"
+                    }
+                    val payload = com.alananasss.kittytune.data.network.PlaylistLikeRequest(
+                        likes = listOf(com.alananasss.kittytune.data.network.PlaylistLikeItem(targetUrn))
+                    )
+
+                    val response = if (isLiked) api.likePlaylist(payload) else api.unlikePlaylist(payload)
+
+                    if (response.code() == 401) {
+                        com.alananasss.kittytune.data.SessionManager.requestSessionRefresh(appContext, force = true)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun replaceAllLikes(serverTracks: List<Track>, currentUserId: Long? = null) {
+        if (currentUserId != null) {
+            val lastUserId = prefs.getLong("last_synced_user_id", -1L)
+            if (lastUserId != -1L && lastUserId != currentUserId) {
+                prefs.edit().remove(KEY_LOCALLY_UNLIKED_IDS).apply()
+            }
+            prefs.edit().putLong("last_synced_user_id", currentUserId).apply()
+            cachedUserId = currentUserId
+        }
+
+        _likedTracks.update { currentLocalList ->
+            val blacklist = getBlacklist()
+
+            val serverList = serverTracks
+                .filter { !blacklist.contains(it.id) }
+                .map { it.copy(isLiked = true) }
+
+            val localNonSoundcloud = currentLocalList.filter {
+                (it.source != "soundcloud" || it.id <= 0L) && !blacklist.contains(it.id)
+            }
+
+            val combined = localNonSoundcloud + serverList
+
+            val mergedAndDeduplicated = combined
+                .groupBy { it.id }
+                .map { (_, tracks) -> tracks.maxByOrNull { it.likedAt ?: 0L }!! }
+
+            mergedAndDeduplicated.sortedByDescending { it.likedAt ?: System.currentTimeMillis() }
+        }
+
+        saveLikedTracks()
+        _isSyncing.value = false
+        scope.launch {
+            com.alananasss.kittytune.data.sync.SyncLikes.seedMissing()
+        }
+    }
+
+    fun likedTrackIds(): Set<Long> = _likedTracks.value.mapTo(HashSet(_likedTracks.value.size)) { it.id }
+
+    fun applyRemoteLike(track: Track, likedAtMs: Long) {
+        removeFromBlacklist(track.id)
+        _likedTracks.update { current ->
+            val safeSource = track.source ?: "soundcloud"
+            if (current.any { it.id == track.id }) {
+                current.map {
+                    if (it.id == track.id) {
+                        it.copy(
+                            isLiked = true,
+                            source = safeSource,
+                            likedAt = likedAtMs.takeIf { t -> t > 0 } ?: it.likedAt ?: System.currentTimeMillis()
+                        )
+                    } else it
+                }.sortedByDescending { it.likedAt ?: 0L }
+            } else {
+                val newTrack = track.copy(
+                    isLiked = true,
+                    source = safeSource,
+                    likedAt = likedAtMs.takeIf { it > 0 } ?: System.currentTimeMillis()
+                )
+                (listOf(newTrack) + current).sortedByDescending { it.likedAt ?: 0L }
+            }
+        }
+        saveLikedTracks()
+    }
+
+    /**
+     * Applies a batch of likes merged from a paired device in a single atomic update.
+     * Writes to flash storage once at the end instead of once per track.
+     */
+    fun applyRemoteLikesBatch(tracks: List<Pair<Track, Long>>) {
+        if (tracks.isEmpty()) return
+        tracks.forEach { removeFromBlacklist(it.first.id) }
+        _likedTracks.update { current ->
+            val trackMap = current.associateBy { it.id }.toMutableMap()
+            val now = System.currentTimeMillis()
+            for ((track, likedAtMs) in tracks) {
+                val safeSource = track.source ?: "soundcloud"
+                val existing = trackMap[track.id]
+                if (existing != null) {
+                    trackMap[track.id] = existing.copy(
+                        isLiked = true,
+                        source = safeSource,
+                        likedAt = likedAtMs.takeIf { t -> t > 0 } ?: existing.likedAt ?: now,
+                    )
+                } else {
+                    trackMap[track.id] = track.copy(
+                        isLiked = true,
+                        source = safeSource,
+                        likedAt = likedAtMs.takeIf { it > 0 } ?: now,
+                    )
+                }
+            }
+            trackMap.values.sortedByDescending { it.likedAt ?: 0L }
+        }
+        saveLikedTracks()
+    }
+
+    fun applyRemoteUnlike(trackId: Long) {
+        addToBlacklist(trackId)
+        _likedTracks.update { it.filterNot { t -> t.id == trackId } }
+        saveLikedTracks()
+    }
+
+    /**
+     * Applies a batch of unlikes merged from a paired device in a single atomic update.
+     */
+    fun applyRemoteUnlikesBatch(trackIds: Set<Long>) {
+        if (trackIds.isEmpty()) return
+        trackIds.forEach { addToBlacklist(it) }
+        _likedTracks.update { it.filterNot { t -> t.id in trackIds } }
+        saveLikedTracks()
+    }
+
+    fun applyRemotePlaylistLike(playlistId: Long, liked: Boolean, permalinkUrl: String? = null, urn: String? = null) {
+        val current = _likedPlaylists.value.toMutableSet()
+        if (liked) {
+            current.add(playlistId)
+            DownloadManager.clearDeletedPlaylistId(playlistId)
+        } else {
+            current.remove(playlistId)
+            val isUserCreated = try {
+                val db = com.alananasss.kittytune.data.local.AppDatabase.getDatabase(appContext).downloadDao()
+                val p = kotlinx.coroutines.runBlocking { db.getPlaylist(playlistId) }
+                p?.isUserCreated == true
+            } catch (_: Exception) { false }
+            if (!isUserCreated) {
+                DownloadManager.addDeletedPlaylistId(playlistId)
+            }
+        }
+        _likedPlaylists.value = current
+        DownloadManager.notifyLibraryUpdated()
+        saveLikedPlaylists()
+    }
+
+    fun clear() {
+        cachedUserId = null
+        _likedTracks.value = emptyList()
+        _likedPlaylists.value = emptySet()
+        _isSyncing.value = false
+        prefs.edit()
+            .remove(KEY_LIKED_TRACKS)
+            .remove(KEY_LIKED_PLAYLISTS)
+            .remove(KEY_LOCALLY_UNLIKED_IDS)
+            .remove("last_synced_user_id")
+            .apply()
+        scope.launch(Dispatchers.IO) {
+            synchronized(fileLock) {
+                try {
+                    val file = File(appContext.filesDir, LIKED_TRACKS_FILE)
+                    if (file.exists()) file.delete()
+                    val tmpFile = File(appContext.filesDir, "$LIKED_TRACKS_FILE.tmp")
+                    if (tmpFile.exists()) tmpFile.delete()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun setSyncing(isSync: Boolean) {
+        _isSyncing.value = isSync
+    }
+
+    private fun saveLikedTracks() {
+        val tracks = _likedTracks.value
+        scope.launch(Dispatchers.IO) {
+            synchronized(fileLock) {
+                try {
+                    val file = File(appContext.filesDir, LIKED_TRACKS_FILE)
+                    val tmpFile = File(appContext.filesDir, "$LIKED_TRACKS_FILE.tmp")
+                    FileWriter(tmpFile).use { fileWriter ->
+                        BufferedWriter(fileWriter).use { bufferedWriter ->
+                            val type: Type = object : TypeToken<List<Track>>() {}.type
+                            gson.toJson(tracks, type, bufferedWriter)
+                        }
+                    }
+                    if (tmpFile.exists()) {
+                        if (file.exists()) {
+                            file.delete()
+                        }
+                        tmpFile.renameTo(file)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    private fun saveLikedPlaylists() {
+        prefs.edit()
+            .putStringSet(KEY_LIKED_PLAYLISTS, _likedPlaylists.value.map { it.toString() }.toSet())
+            .apply()
+    }
+
+    private fun loadFromStorage() {
+        var loadedList: List<Track>? = null
+        val file = File(appContext.filesDir, LIKED_TRACKS_FILE)
+        if (file.exists()) {
+            try {
+                FileReader(file).use { fileReader ->
+                    BufferedReader(fileReader).use { bufferedReader ->
+                        val type: Type = object : TypeToken<List<Track>>() {}.type
+                        loadedList = gson.fromJson(bufferedReader, type)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        if (loadedList == null) {
+            val json = prefs.getString(KEY_LIKED_TRACKS, null)
+            if (json != null) {
+                try {
+                    val type: Type = object : TypeToken<List<Track>>() {}.type
+                    loadedList = gson.fromJson(json, type)
+                    prefs.edit().remove(KEY_LIKED_TRACKS).apply()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        if (loadedList != null) {
+            val now = System.currentTimeMillis()
+            val migratedList = loadedList.mapIndexed { index, track ->
+                if (track.likedAt == null || track.likedAt == 0L) {
+                    track.copy(likedAt = now - (index * 1000))
+                } else {
+                    track
+                }
+            }
+            val blacklist = getBlacklist()
+            _likedTracks.value = migratedList.filter { !blacklist.contains(it.id) }
+            saveLikedTracks()
+        }
+
+        val savedPlaylistIds =
+            prefs.getStringSet(KEY_LIKED_PLAYLISTS, emptySet())?.mapNotNull { it.toLongOrNull() }?.toSet() ?: emptySet()
+        _likedPlaylists.value = savedPlaylistIds
+    }
+}
