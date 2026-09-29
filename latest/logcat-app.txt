@@ -1,284 +1,376 @@
-09-29 18:50:20.563   832   866 V WindowManagerShell: Transition requested: android.os.BinderProxy@a7c0440 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity } baseActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} topActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} origActivity=null realActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} numActivities=1 lastActiveTime=51662 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@9997f79} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{bc854be com.alananasss.kittytune.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
-09-29 18:50:20.564   521   954 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} with LAUNCH_SINGLE_TASK from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
-09-29 18:50:20.667   521   538 V WindowManager: Sent Transition #6 createdAt=09-29 18:50:20.543 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity } baseActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} topActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} origActivity=null realActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} numActivities=1 lastActiveTime=51662 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{9a50010 Task{723e57 #8 type=standard A=10192:io.github.timur363.vinyl}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{da61709 com.alananasss.kittytune.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
-09-29 18:50:20.668   521   538 V WindowManager:     info={id=6 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{9a50010 Task{723e57 #8 type=standard A=10192:io.github.timur363.vinyl}}} m=OPEN f=NONE leash=Surface(name=Task=8)/@0xfb8ada4 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{4b2bd0e Task{a7974d5 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x8c5505b sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
-09-29 18:50:20.706  1685  2562 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
-09-29 18:50:20.745  3614  3614 I .timur363.vinyl: Using CollectorTypeCC GC.
-09-29 18:50:20.746  3614  3614 W .timur363.vinyl: Unexpected CPU variant for x86: x86_64.
-09-29 18:50:20.746  3614  3614 W .timur363.vinyl: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
-09-29 18:50:20.748   521   551 I ActivityManager: Start proc 3614:io.github.timur363.vinyl/u0a192 for next-top-activity {io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}
-09-29 18:50:20.762  3614  3614 E .timur363.vinyl: Not starting debugger since process cannot load the jdwp agent.
-09-29 18:50:20.952  3614  3614 D nativeloader: Configuring clns-6 for other apk /data/app/~~c7R35qNSMZlv_rpnh8K7_w==/io.github.timur363.vinyl-JTRDI0ckthof0n00dXIqGA==/base.apk. target_sdk_version=37, uses_libraries=, library_path=/data/app/~~c7R35qNSMZlv_rpnh8K7_w==/io.github.timur363.vinyl-JTRDI0ckthof0n00dXIqGA==/lib/x86_64:/data/app/~~c7R35qNSMZlv_rpnh8K7_w==/io.github.timur363.vinyl-JTRDI0ckthof0n00dXIqGA==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/io.github.timur363.vinyl
-09-29 18:50:20.956  3614  3614 V GraphicsEnvironment: ANGLE GameManagerService for io.github.timur363.vinyl: false
-09-29 18:50:20.956  3614  3614 V GraphicsEnvironment: io.github.timur363.vinyl is not listed in per-application setting
-09-29 18:50:21.054  1039  1039 D CarrierSvcBindHelper: onPackageAdded: io.github.timur363.vinyl
-09-29 18:50:21.195  3614  3614 E .timur363.vinyl: Failed to open APK '/data/resource-cache/com.android.systemui-neutral-bIKv.frro': Invalid file
-09-29 18:50:21.195  3614  3614 E .timur363.vinyl: Failed to open APK '/data/resource-cache/com.android.systemui-accent-vqBt.frro': Invalid file
-09-29 18:50:21.195  3614  3614 E .timur363.vinyl: Failed to open APK '/data/resource-cache/com.android.systemui-dynamic-Hffu.frro': Invalid file
-09-29 18:50:21.201  1039  1368 D ImsResolver: maybeAddedImsService, packageName: io.github.timur363.vinyl
-09-29 18:50:21.255  3614  3614 W .timur363.vinyl: Entry not found
-09-29 18:50:21.356  3614  3682 I cr_VariationsUtils: Failed reading seed file "/data/user/0/io.github.timur363.vinyl/app_webview/variations_seed_new"
-09-29 18:50:21.357  3614  3682 I cr_VariationsUtils: Failed reading seed file "/data/user/0/io.github.timur363.vinyl/app_webview/variations_seed"
-09-29 18:50:21.503   521   804 I SdkSandboxManager: No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10192, mPackageName='io.github.timur363.vinyl, mAppProcessToken='null'}
-09-29 18:50:21.641   521   551 I ActivityManager: Start proc 3716:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {io.github.timur363.vinyl/org.chromium.content.app.SandboxedProcessService0:0}
-09-29 18:50:21.689   978  1020 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-09-29 18:50:21.769  1415  1476 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:21.861  1039  1039 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:21.861  1039  1039 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:21.862  1039  1039 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:22.122   521  2602 D CoreBackPreview: Window{e1b24ad u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@785d857, mPriority=-1, mIsAnimationCallback=false}
-09-29 18:50:22.124   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
-09-29 18:50:22.124   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
-09-29 18:50:22.124   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
-09-29 18:50:22.269  1415  1476 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:22.540   521   549 E PackageManager: java.util.concurrent.TimeoutException: [Optimistic Bind] Didn't bind to resolver in time!
-09-29 18:50:22.735  1039  1039 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:22.893   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
-09-29 18:50:22.893   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
-09-29 18:50:22.893   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
-09-29 18:50:22.895   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
-09-29 18:50:22.895   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
-09-29 18:50:22.895   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
-09-29 18:50:22.955  1415  3601 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:23.179  1039  1039 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:23.179  1039  1039 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:23.211   978  1020 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-09-29 18:50:23.448  1039  1039 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:23.451  1470  3568 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:23.768   521   599 I WindowManager: finishDrawing of relaunch: Window{e1b24ad u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} 2242ms
-09-29 18:50:23.960   521  1766 W InputManager-JNI: Input channel object '63c7f74 Splash Screen io.github.timur363.vinyl (client)' was disposed without first being removed with the input manager!
-09-29 18:50:24.117  1470  3568 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:24.277  1470  1510 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:24.436  1415  3339 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:24.560  1415  3339 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:24.582  3790  3915 W cr_AWNetworkFetcherTask: IOException during downloadToFile.
-09-29 18:50:24.582  3790  3915 W cr_AWNetworkFetcherTask: java.io.IOException: Cleartext HTTP traffic to edgedl.me.gvt1.com not permitted
-09-29 18:50:24.779  1470  1510 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:24.990   521   538 I ActivityTaskManager: Displayed io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity for user 0: +3s301ms
-09-29 18:50:25.028  1039  1039 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-29 18:50:25.293   521  2011 D CoreBackPreview: Window{e1b24ad u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}: Setting back callback null
-09-29 18:50:25.384   521  1982 W InputManager-JNI: Input channel object 'e1b24ad io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity (client)' was disposed without first being removed with the input manager!
-09-29 18:50:25.432   521  1766 D CoreBackPreview: Window{8e2aa68 u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@9268b26, mPriority=-1, mIsAnimationCallback=false}
-09-29 18:50:25.704  1415  3517 W SemanticLocation: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 202086 nanoseconds delay) for dlnx@5364fc[status=PENDING, info=[function=[bzrs@32ef785]]]
-09-29 18:50:25.841   521  2621 I ImeTracker: io.github.timur363.vinyl:b4047a24: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
-09-29 18:50:25.841   521  2621 I ImeTracker: io.github.timur363.vinyl:b4047a24: onCancelled at PHASE_SERVER_SHOULD_HIDE
-09-29 18:50:25.848  1528  1528 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=io.github.timur363.vinyl fieldId=0 fieldName=null extras=null}, false)
-09-29 18:50:25.952   521  1187 I MediaSessionStack: addSession to bottom of stack | record: io.github.timur363.vinyl/androidx.media3.session.id.KittyTuneSession (userId=0)
-09-29 18:50:26.016   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
-09-29 18:50:26.016   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
-09-29 18:50:26.016   521   549 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
-09-29 18:50:26.118  1634  4047 E TaskWorkerFactory: java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
-09-29 18:50:26.173   521  1766 D ConnectivityService: requestNetwork for uid/pid:10192/3614 activeRequest: null callbackRequest: 97 [NetworkRequest [ REQUEST id=98, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
-09-29 18:50:26.175   521   757 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=98, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
-09-29 18:50:26.175   521   757 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=98, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
-09-29 18:50:26.175   521   757 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=98, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
-09-29 18:50:26.176   521   757 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=98, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
-09-29 18:50:26.205  1022  1022 D MediaPlayerList: onActiveSessionsChanged: controller: io.github.timur363.vinyl
-09-29 18:50:26.208  1022  1022 I MediaPlayerList: Adding wrapped media player: io.github.timur363.vinyl at key: 2
-09-29 18:50:26.216  1022  1022 D MediaPlayerList: onActiveSessionsChanged: controller: io.github.timur363.vinyl
-09-29 18:50:26.216  1022  1022 I MediaPlayerList: Adding wrapped media player: io.github.timur363.vinyl at key: 2
-09-29 18:50:26.365  1470  4068 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:26.384  1415  1429 W FontLog : java.util.concurrent.TimeoutException: Waited 10000 milliseconds (plus 357582 nanoseconds delay) for dlrl@7827281[status=PENDING]
-09-29 18:50:26.390  1838  2085 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
-09-29 18:50:26.390  1838  2085 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
-09-29 18:50:26.390  1838  2085 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
-09-29 18:50:26.390  1838  2085 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
-09-29 18:50:26.391  1838  2085 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
-09-29 18:50:26.391  1838  2085 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
-09-29 18:50:26.394  1470  4068 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:26.662  1838  2085 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
-09-29 18:50:26.662  1838  2085 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
-09-29 18:50:26.662  1838  2085 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
-09-29 18:50:26.662  1838  2085 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
-09-29 18:50:26.662  1838  2085 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
-09-29 18:50:26.662  1838  2085 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
-09-29 18:50:26.692  3614  3614 D KittyTuneAA: onConnectAsync: pkg=io.github.timur363.vinyl, isAuto=false
-09-29 18:50:26.698  3614  3614 D KittyTuneAA: onPostConnect: pkg=io.github.timur363.vinyl, isAuto=false
-09-29 18:50:26.700  3614  3614 D KittyTuneAA: onConnectAsync: pkg=io.github.timur363.vinyl, isAuto=false
-09-29 18:50:26.700  3614  3614 D KittyTuneAA: onPostConnect: pkg=io.github.timur363.vinyl, isAuto=false
-09-29 18:50:26.820  1415  4097 E dlpn    : RuntimeException while executing runnable dlqc{qze@6086742} with executor MoreExecutors.directExecutor()
-09-29 18:50:26.820  1415  4097 E dlpn    : java.lang.NullPointerException: Attempt to get length of null array
-09-29 18:50:26.820  1470  3265 E constellation: java.io.IOException: AUTHENTICATION_FAILED
-09-29 18:50:26.851  1685  1685 I AiAiEcho: AppFetcherImplV2 updateApps package:[io.github.timur363.vinyl], userId:[0], reason:[package is added.].
-09-29 18:50:26.898  1415  3681 W FontLog : java.lang.IllegalStateException: Cannot perform this operation because the connection pool has been closed.
-09-29 18:50:26.899  1415  3519 W FontLog : java.lang.IllegalStateException: Cannot perform this operation because the connection pool has been closed.
-09-29 18:50:26.899  3614  3614 D KittyTuneAA: combine flow: auto=false, pref=true
-09-29 18:50:26.899  3614  3614 D KittyTuneAA: automotiveLyricsObserver: shouldRun=false
-09-29 18:50:27.038  1039  1039 D CarrierSvcBindHelper: onPackageModified: io.github.timur363.vinyl
-09-29 18:50:27.050  1039  1368 D ImsResolver: maybeAddedImsService, packageName: io.github.timur363.vinyl
-09-29 18:50:27.102  3631  4002 E FirebaseInstanceId: Topic sync or token retrieval failed on hard failure exceptions: AUTHENTICATION_FAILED. Won't retry the operation.
-09-29 18:50:27.164  1470  2037 W GCM-GMS : Failed to get registration: java.io.IOException: AUTHENTICATION_FAILED
-09-29 18:50:27.307  3614  4164 D ProfileInstaller: Installing profile for io.github.timur363.vinyl
-09-29 18:50:27.319  1470  4056 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:27.426  1470  4056 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:27.474  1415  4096 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:27.593  1415  4096 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:27.605  1415  1753 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:27.887  3631  3990 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:27.905   834   834 I SafetyLabelChangedBroadcastReceiver: received broadcast packageName: io.github.timur363.vinyl, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
-09-29 18:50:28.076  1415  1753 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:28.118  1415  3601 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:29.315  1470  4056 W GCM-GMS : Failed to get direct boot token: java.io.IOException: AUTHENTICATION_FAILED
-09-29 18:50:30.143  1821  1821 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
-09-29 18:50:30.143  1821  1821 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:30.353  1470  3267 W PhenotypeRegOp: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:30.408  1821  2754 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications.platform#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
-09-29 18:50:30.408  1821  2754 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:30.886  1685  1685 I AiAiEcho: AppFetcherImpl onPackageChanged io.github.timur363.vinyl.
-09-29 18:50:30.915  1685  3131 I AiAiEcho: AppIndexer Package:[io.github.timur363.vinyl] UserProfile:[0] Enabled:[true].
-09-29 18:50:30.915  1685  3131 I AiAiEcho: AppFetcherImplV2 updateApps package:[io.github.timur363.vinyl], userId:[0], reason:[package is updated.].
-09-29 18:50:31.122  1039  1039 D CarrierSvcBindHelper: onPackageModified: io.github.timur363.vinyl
-09-29 18:50:31.173  1039  1368 D ImsResolver: maybeAddedImsService, packageName: io.github.timur363.vinyl
-09-29 18:50:31.459  3614  3624 W .timur363.vinyl: Cleared Reference was only reachable from finalizer (only reported once)
-09-29 18:50:31.465  3614  3624 I .timur363.vinyl: Background concurrent copying GC freed 283118(10MB) AllocSpace objects, 45(1872KB) LOS objects, 49% free, 14MB/28MB, paused 154us,12us total 113.276ms
-09-29 18:50:31.779  1415  3537 W Looper  : java.lang.RuntimeException: Handler (acdu) {d9ace39} sendMessageAtTime() called with no mQueue
-09-29 18:50:31.779  1415  3537 W Looper  : java.lang.RuntimeException: Handler (acdu) {d9ace39} sendMessageAtTime() called with no mQueue
-09-29 18:50:31.779  1415  3537 W Looper  : java.lang.RuntimeException: Handler (acdu) {d9ace39} sendMessageAtTime() called with no mQueue
-09-29 18:50:31.779  1415  3537 W Looper  : java.lang.RuntimeException: Handler (acdu) {d9ace39} sendMessageAtTime() called with no mQueue
-09-29 18:50:31.876  1415  3336 W Looper  : java.lang.RuntimeException: Handler (acdu) {d9ace39} sendMessageAtTime() called with no mQueue
-09-29 18:50:31.877  1415  3336 W Looper  : java.lang.RuntimeException: Handler (acdu) {d9ace39} sendMessageAtTime() called with no mQueue
-09-29 18:50:33.047  1669  2356 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=3000, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=<unknown>, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=80000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/ringtones/Andromeda.ogg, _size=24973, album=ringtones, genre=null, is_alarm=0, title=Andromeda, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-09-29 18:50:33.047  1669  2356 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-09-29 18:50:34.103  1685  1685 I AiAiEcho: AppFetcherImpl onPackageChanged io.github.timur363.vinyl.
-09-29 18:50:34.106  1685  2648 I AiAiEcho: AppIndexer Package:[io.github.timur363.vinyl] UserProfile:[0] Enabled:[true].
-09-29 18:50:34.106  1685  2648 I AiAiEcho: AppFetcherImplV2 updateApps package:[io.github.timur363.vinyl], userId:[0], reason:[package is updated.].
-09-29 18:50:34.537  1470  3266 I BlockstoreStorage: Clearing Blockstore Data for package io.github.timur363.vinyl [CONTEXT service_id=258 ]
-09-29 18:50:34.688  1039  1039 E PhoneInterfaceManager: isVoNrEnabled: CommandException: com.android.internal.telephony.CommandException: REQUEST_NOT_SUPPORTED
-09-29 18:50:34.688  1039  1039 E PhoneInterfaceManager: isVoNrEnabled: CommandException: com.android.internal.telephony.CommandException: REQUEST_NOT_SUPPORTED
-09-29 18:50:34.700  1042  1074 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-09-29 18:50:34.820  1470  3274 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:35.108   521   979 W FileUtils: android.system.ErrnoException: chmod failed: ENOENT (No such file or directory)
-09-29 18:50:35.278  3614  4447 I OkHttp  : url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2353044650/dba4a999-f558-4c2e-83d3-a38d1df7b63d/stream/hls","preset":"abr_sq","duration":300071,"snipped":false,"format":{"protocol":"hls","mime_type":"audio/mpegurl"},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2353044650/a26dbdd9-4b9e-49af-8487-ccaa9ad5ea95/stream/hls","preset":"mp3_1_0","duration":300025,"snipped":false,"format":{"protocol":"hls","mime_type":"audio/mpeg"},"quality":"sq","is_legacy_transcoding":true},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2353044650/a26dbdd9-4b9e-49af-8487-ccaa9ad5ea95/stream/progressive","preset":"mp3_1_0","duration":300025,"snipped":false,"format":{"protocol":"progressive","mime_type":"audio/mpeg"},"quality":"sq","is_legacy_transcoding":true}]},"station_urn":"soundcloud:system-playlists:track-stations:2353044650","station_permalink":"track-stations:2353044650","track_authorization":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJnZW8iOiJVUyIsInN1YiI6IiIsInJpZCI6IjI5ODBlMDM0LTVkNTctNGVlNy04YjJkLTg4NGNkMzI0NTZjNyIsImlhdCI6MTc5MDcwNzgzNX0.oA8VnO0Hj8dmHbCJn5fA8_aL2KYb9Je5G6J4TLLq2D8","monetization_model":"BLACKBOX","policy":"MONETIZE","user":{"avatar_url":"https://a1.sndcdn.com/images/default_avatar_large.png","first_name":"Dusan","followers_count":41,"full_name":"Dusan Duchane","id":1506081484,"kind":"user","last_modified":"2026-07-04T11:37:40Z","last_name":"Duchane","permalink":"dusan-duchane","permalink_url":"https://soundcloud.com/dusan-duchane","uri":"https://api.soundcloud.com/users/soundcloud%3Ausers%3A1506081484","urn":"soundcloud:users:1506081484","username":"Dusan Duchane","verified":false,"city":null,"country_code":null,"badges":{"pro":false,"creator_mid_tier":false,"pro_unlimited":false,"verified":false},"station_urn":"soundcloud:system-playlists:artist-stations:1506081484","station_permalink":"artist-stations:1506081484"}},{"id":2353044644,"kind":"track","monetization_model":"BLACKBOX","policy":"MONETIZE"},{"id":2353044629,"kind":"track","monetization_model":"BLACKBOX","policy":"MONETIZE"},{"id":2353044623,"kind":"track","monetization_model":"BLACKBOX","policy":"MONETIZE"}],"track_count":8},{"artwork_url":null,"created_at":"2026-04-12T00:27:34Z","description":"","duration":2221709,"embeddable_by":"all","genre":"Hip-hop & Rap","id":2220773333,"kind":"playlist","label_name":"℗ 2026 TOPSPOT PICTURES Co.,Ltd,under license to Kakao Entertainment","last_modified":"2026-05-02T23:11:35Z","license":"all-rights-reserved","likes_count":155,"managed_by_feeds":false,"permalink":"top-spot-another-dimension","permalink_url":"https://soundcloud.com/topspot_pictures/sets/top-spot-another-dimension","public":true,"purchase_title":null,"purchase_url":null,"release_date":"2026-04-03T00:00:00Z","reposts_count":6,"secret_token":null,"sharing":"public","tag_list":"","title":"TOP SPOT - ANOTHER DIMENSION","uri":"https://api.soundcloud.com/playlists/soundcloud%3Aplaylists%3A2220773333","user_id":218728724,"set_type":"album","is_album":true,"published_at":"2026-04-12T00:27:34Z","display_date":"2026-04-12T00:27:34Z","user":{"avatar_url":"https://i1.sndcdn.com/avatars-GS08j3nB8n1Oi8xy-vsr9Eg-large.jpg","city":"Seoul","comments_count":0,"country_code":"KR","created_at":null,"creator_subscriptions":[{"product":{"id":"free"}}],"creator_subscription":{"product":{"id":"free"}},"description":"T.O.P (Choi Seung-hyun) is a global artist transcending the boundaries of music, film, and contemporary art. Renowned as an iconic deep-bass rapper who ignited a worldwide movement, he has built a distinctive solo career blending sophisticated sounds with philosophical lyrics. Beyond music, his exceptional acting and overwhelming on-screen presence have earned him prestigious awards at major international film festivals. Recently expanding his creative horizons as an art collector, wine producer, and creative director, T.O.P continues to inspire fans globally with his visionary journey and unwavering commitment to c
-09-29 18:50:35.437  1042  1074 E HardwareInfoFeatureProviderImpl: java.lang.NumberFormatException: For input string: "E"
-09-29 18:50:35.620  3614  4483 I OkHttp  : s-WlxY3fVbJTvga4b1-cseNRA-large.jpg","first_name":"Josh","followers_count":11,"full_name":"Josh Behles","id":1642527002,"kind":"user","last_modified":"2026-08-10T21:14:26Z","last_name":"Behles","permalink":"josh-behles","permalink_url":"https://soundcloud.com/josh-behles","uri":"https://api.soundcloud.com/users/soundcloud%3Ausers%3A1642527002","urn":"soundcloud:users:1642527002","username":"Xandd","verified":false,"city":"Saint Augustine","country_code":"US","badges":{"pro":false,"creator_mid_tier":false,"pro_unlimited":true,"verified":false},"station_urn":"soundcloud:system-playlists:artist-stations:1642527002","station_permalink":"artist-stations:1642527002"}},{"artwork_url":"https://i1.sndcdn.com/artworks-oLMQDOWHbOJF-0-large.png","caption":null,"commentable":true,"comment_count":3,"created_at":"2026-09-03T15:33:17Z","description":null,"downloadable":false,"download_count":0,"duration":156410,"full_duration":156363,"embeddable_by":"all","genre":"Dance","has_downloads_left":false,"id":2393801466,"kind":"track","label_name":"Armada Music","last_modified":"2026-09-03T15:43:45Z","license":"all-rights-reserved","likes_count":166,"permalink":"greece-2000","permalink_url":"https://soundcloud.com/mikewilliamsdj/greece-2000","playback_count":2840,"public":true,"publisher_metadata":{"id":2393801466,"urn":"soundcloud:tracks:2393801466","artist":"Mike Williams, Three Drives, Three Drives On A Vinyl, ANTICALM","album_title":"Greece 2000","contains_music":true,"upc_or_ean":"8718522633744","isrc":"NLF712605667","explicit":false,"p_line":"1997 Armada Music B.V.","p_line_for_display":"℗ 1997 Armada Music B.V.","c_line":"2026 Armada Music B.V.","c_line_for_display":"© 2026 Armada Music B.V.","writer_composer":"Ton van Empel, Erik de Koning","release_title":"Greece 2000"},"purchase_title":null,"purchase_url":null,"release_date":"2026-09-18T00:00:00Z","reposts_count":13,"secret_token":null,"sharing":"public","state":"finished","streamable":true,"tag_list":"\"Tech House\"","title":"Greece 2000","uri":"https://api.soundcloud.com/tracks/soundcloud%3Atracks%3A2393801466","urn":"soundcloud:tracks:2393801466","user_id":8681825,"visuals":null,"waveform_url":"https://wave.sndcdn.com/BxHdJ9jMzlW6_m.json","display_date":"2026-09-18T00:00:00Z","media":{"transcodings":[{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/52de5130-67ab-490f-973f-287afd6eac37/stream/cbc-encrypted-hls","preset":"aac_160k","duration":156410,"snipped":false,"format":{"protocol":"cbc-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/52de5130-67ab-490f-973f-287afd6eac37/stream/ctr-encrypted-hls","preset":"aac_160k","duration":156410,"snipped":false,"format":{"protocol":"ctr-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/1a1e5fca-9734-415c-84d6-4878f9b58b6d/stream/cbc-encrypted-hls","preset":"aac_96k","duration":156410,"snipped":false,"format":{"protocol":"cbc-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"lq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/1a1e5fca-9734-415c-84d6-4878f9b58b6d/stream/ctr-encrypted-hls","preset":"aac_96k","duration":156410,"snipped":false,"format":{"protocol":"ctr-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"lq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/dafb8a9e-711f-4f02-abcc-35d079879184/stream/cbc-encrypted-hls","preset":"abr_sq","duration":156410,"snipped":false,"format":{"protocol":"cbc-encrypted-hls","mime_type":"audio/mpegurl"},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/dafb8a9e-711f-4f02-abcc-35d079879184/stream/ctr-encrypted-hls","preset":"abr
-09-29 18:50:36.371  1550  1586 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 358976 nanoseconds delay) for lki@424f64f[status=PENDING, info=[inputFuture=[lkh@6e321dc[status=PENDING, setFuture=[ljp@f2ea2e5[status=PENDING, info=[inputFuture=[lki@e9b51ba[status=PENDING, info=[inputFuture=[lki@ae4a86b[status=PENDING, info=[inputFuture=[lld@c6e7fc8[status=PENDING, info=[futures=[lki@2ab8861[status=PENDING, info=[inputFuture=[lki@29ccf86[status=PENDING, info=[inputFuture=[lmb@ba36047[status=PENDING, info=[delegate=[lng@9cfd074[status=PENDING, setFuture=[lki@cb7499d[status=PENDING, info=[inputFuture=[lkh@ee65e12[status=PENDING, info=[inputFuture=[lmb@cabb9e3[status=PENDING, info=[delegate=[lng@537fe0[status=PENDING, setFuture=[lkh@bc3e299[status=PENDING, info=[function=[propagating=[cac@cc8495e]]]]]]]]]], function=[propagating=[bwd@456113f]]]]], function=[propagating=[bwc@789d383]]]]]]]]]], function=[propagating=[bvr@7a0ba0c]]]]], function=[propagating=[cur@9670f55]]]]]]]], function=[propagating=[dce@9c1e77e]]]]], function=[propagating=[bvq@84b9d6a]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bwc@361d52c]]]]]]], function=[propagating=[bvq@c24825b]]]]
-09-29 18:50:36.952  4519  4559 E IndexablesProvider: Provider querying exception:
-09-29 18:50:36.952  4519  4559 E IndexablesProvider: java.lang.IllegalStateException: We should initialize FormFactorUtils before getting instance.
-09-29 18:50:37.006  1470  1509 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:37.012  1470  3274 W PeoplePU: java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ProxyGalProvider}
-09-29 18:50:37.012  1470  3274 W PeoplePU: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3061)
-09-29 18:50:37.012  1470  3274 W PeoplePU: 	at android.os.Parcel.createException(Parcel.java:3041)
-09-29 18:50:37.012  1470  3274 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:3024)
-09-29 18:50:37.012  1470  3274 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2966)
-09-29 18:50:37.012  1470  3274 W PeoplePU: Caused by: android.os.RemoteException: Remote stack trace:
-09-29 18:50:37.019  1470  4079 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
-09-29 18:50:37.019  1470  4079 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
-09-29 18:50:37.300  1415  4098 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/default_model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
-09-29 18:50:37.300  1415  4098 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:37.374  1470  4477 W PeoplePU: android.content.pm.PackageManager$NameNotFoundException: ComponentInfo{com.google.android.gms/com.google.android.gms.people.sync.focus.ContactsSyncAdapterService}
-09-29 18:50:37.404  1415  4098 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
-09-29 18:50:37.404  1415  4098 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:38.217  4505  4641 W BugleRcs: android.content.pm.PackageManager$NameNotFoundException: com.google.android.ims
-09-29 18:50:38.811  1415  4098 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
-09-29 18:50:38.811  1415  4098 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:40.267  1415  2149 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:40.389  1415  4098 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
-09-29 18:50:40.389  1415  4098 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:40.470  1415  2149 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:40.567  1415  2149 W GLSUser : [AppCertManager] Exception while requesting key: 
-09-29 18:50:40.567  1415  2149 W GLSUser : java.io.IOException: Invalid device key response.
-09-29 18:50:40.658  1470  4633 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
-09-29 18:50:40.829  1415  4098 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
-09-29 18:50:40.829  1415  4098 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:41.401  1470  3285 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:41.433  1470  3285 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:41.509  1550  1586 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 96689 nanoseconds delay) for lki@30336c1[status=PENDING, info=[inputFuture=[lkh@d534e66[status=PENDING, setFuture=[ljp@73fa5a7[status=PENDING, info=[inputFuture=[lki@bc9a54[status=PENDING, info=[inputFuture=[lki@84b7dfd[status=PENDING, info=[inputFuture=[lld@735eaf2[status=PENDING, info=[futures=[lki@8b6f543[status=PENDING, info=[inputFuture=[lki@97307c0[status=PENDING, info=[inputFuture=[lmb@d6fcf9[status=PENDING, info=[delegate=[lng@e33c43e[status=PENDING, setFuture=[lki@7c9a29f[status=PENDING, info=[inputFuture=[lkh@660dfec[status=PENDING, info=[inputFuture=[lmb@8016fb5[status=PENDING, info=[delegate=[lng@3a3e64a[status=PENDING, setFuture=[lkh@42fc9bb[status=PENDING, setFuture=[lki@9720ed8[status=PENDING, info=[inputFuture=[lki@9265231[status=PENDING, info=[inputFuture=[lkh@5421d16[status=PENDING, info=[function=[propagating=[cft@7074697]]]]], function=[propagating=[cfu@5654084]]]]], function=[propagating=[cfu@fdce06d]]]]]]]]]]]], function=[propagating=[bwd@ebaf4a2]]]]], function=[propagating=[bwc@789d383]]]]]]]]]], function=[propagating=[bvr@36fb533]]]]], function=[propagating=[cur@837e0f0]]]]]]]], function=[propagating=[dce@9c1e77e]]]]], function=[propagating=[bvq@ff41669]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bwc@361d52c]]]]]]], function=[propagating=[bvq@7f7b8ee]]]]
-09-29 18:50:41.818  3614  3624 I .timur363.vinyl: Background concurrent copying GC freed 159734(6466KB) AllocSpace objects, 10(4724KB) LOS objects, 49% free, 16MB/33MB, paused 18us,12us total 113.242ms
-09-29 18:50:44.146   521   910 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10131.xml: open failed: ENOENT (No such file or directory)
-09-29 18:50:44.146   521   910 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:44.375  1821  2363 E cr_CronetUrlRequestContext: Exception in upload method
-09-29 18:50:44.481  1470  1509 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:44.510  1470  1509 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:44.775   521   592 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10131.xml: open failed: ENOENT (No such file or directory)
-09-29 18:50:44.775   521   592 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:783)
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:3041)
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:3024)
-09-29 18:50:44.821  1470  4476 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2966)
-09-29 18:50:44.848  1415  1487 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
-09-29 18:50:45.651  1415  2149 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
-09-29 18:50:45.716  1415  3519 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:45.795  1415  3519 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:46.287  1470  3285 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:46.365  1470  3285 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:47.291   521   979 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10131.xml: open failed: ENOENT (No such file or directory)
-09-29 18:50:47.291   521   979 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:783)
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:3041)
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:3024)
-09-29 18:50:47.317  1470  1517 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2966)
-09-29 18:50:47.773  1415  1753 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
-09-29 18:50:47.820  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.credentials.CredentialManagerPreferenceController
-09-29 18:50:47.820  1042  1419 W SliceDataConverter: Caused by: java.lang.reflect.InvocationTargetException
-09-29 18:50:47.820  1042  1419 W SliceDataConverter: Caused by: java.lang.RuntimeException: Can't create handler inside thread Thread[binder:1042_5,5,main] that has not called Looper.prepare()
-09-29 18:50:47.824  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
-09-29 18:50:47.824  1042  1419 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
-09-29 18:50:47.824  1042  1419 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
-09-29 18:50:47.836  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.NetworkProviderSimsCategoryController
-09-29 18:50:47.836  1042  1419 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.NetworkProviderSimsCategoryController.<init> [class android.content.Context, class java.lang.String]
-09-29 18:50:47.841  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.accessibility.VibrationMainSwitchPreferenceController
-09-29 18:50:47.841  1042  1419 W SliceDataConverter: Caused by: java.lang.reflect.InvocationTargetException
-09-29 18:50:47.841  1042  1419 W SliceDataConverter: Caused by: java.lang.RuntimeException: Can't create handler inside thread Thread[binder:1042_5,5,main] that has not called Looper.prepare()
-09-29 18:50:47.876  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.telephony.CallsDefaultSubscriptionController
-09-29 18:50:47.876  1042  1419 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.telephony.CallsDefaultSubscriptionController.<init> [class android.content.Context, class java.lang.String]
-09-29 18:50:47.885  1042  1419 E HardwareInfoFeatureProviderImpl: java.lang.NumberFormatException: For input string: "E"
-09-29 18:50:47.900  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.fuelgauge.batteryusage.BatteryChartPreferenceController
-09-29 18:50:47.900  1042  1419 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.fuelgauge.batteryusage.BatteryChartPreferenceController.<init> [class android.content.Context, class java.lang.String]
-09-29 18:50:47.926  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
-09-29 18:50:47.926  1042  1419 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
-09-29 18:50:47.926  1042  1419 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
-09-29 18:50:47.931  1042  1419 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-09-29 18:50:47.944  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
-09-29 18:50:47.944  1042  1419 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
-09-29 18:50:47.944  1042  1419 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
-09-29 18:50:47.946  1042  1419 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.telephony.CallsDefaultSubscriptionController
-09-29 18:50:47.946  1042  1419 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.telephony.CallsDefaultSubscriptionController.<init> [class android.content.Context, class java.lang.String]
-09-29 18:50:48.268  1415  1753 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:48.283  1042  4482 D SettingsSliceProvider: java.lang.IllegalStateException: Invalid Slices key from path: wifi_calling
-09-29 18:50:48.323  1415  1753 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:48.558  3614  3614 I chromium: [INFO:CONSOLE(0)] "Access to fetch at 'https://mp.4dex.io/prebid' from origin 'https://m.soundcloud.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.", source: https://m.soundcloud.com/discover?kittytune_refresh=1790707826299 (0)
-09-29 18:50:48.793  1470  3285 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:48.949  1669  2356 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=10170, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=<unknown>, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=192000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/ringtones/Perseus.ogg, _size=236343, album=ringtones, genre=null, is_alarm=0, title=Perseus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-09-29 18:50:48.949  1669  2356 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-09-29 18:50:48.956  1669  2356 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=3498, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=<unknown>, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=80000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/ringtones/CanisMajor.ogg, _size=31133, album=ringtones, genre=null, is_alarm=0, title=Canis Major, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-09-29 18:50:48.956  1669  2356 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-09-29 18:50:48.972  1470  3285 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:51.558  1669  2356 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-09-29 18:50:51.558  1669  2356 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-09-29 18:50:51.666  1669  2057 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
-09-29 18:50:51.678  1669  2057 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
-09-29 18:50:52.920  4505  4636 W RcsClientLib: java.lang.IllegalStateException: JibeService Not Initialized
-09-29 18:50:52.920  4505  4636 W RcsClientLib: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3065)
-09-29 18:50:52.920  4505  4636 W RcsClientLib: 	at android.os.Parcel.createException(Parcel.java:3041)
-09-29 18:50:52.920  4505  4636 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:3024)
-09-29 18:50:52.920  4505  4636 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:2966)
-09-29 18:50:52.920  4505  4636 W RcsClientLib: 	at com.google.android.aidl.BaseProxy.transactAndReadExceptionReturnVoid(PG:3)
-09-29 18:50:53.563  5270  5270 E BugleRcsEngine: [2] JibeService.onDestroy: JibeService: onDestroy() unregister factory exception: java.lang.IllegalArgumentException: Receiver not registered: com.google.android.ims.receiver.sip.DebugOptionsReceiver@51e7be4
-09-29 18:50:53.670  1415  1487 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:53.685  1415  1487 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
-09-29 18:50:54.194  3614  3624 I .timur363.vinyl: Background concurrent copying GC freed 402880(15MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 18MB/36MB, paused 18us,11us total 168.707ms
-09-29 18:50:54.846   521   624 W InputDispatcher: Not sending touch gesture to 6c6c57b ActivityRecordInputSink io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity because it has config NO_INPUT_CHANNEL
-09-29 18:50:56.182  3614  3614 I chromium: [INFO:CONSOLE(0)] "Mixed Content: The page at 'https://m.soundcloud.com/discover?kittytune_refresh=1790707826299' was loaded over HTTPS, but requested an insecure image 'http://visitor-pgammedia.omnitagjs.com/visitor/%5BRED%5D?visitor=42e60fc2-0a1c-4f9a-adee-76a3842800bd'. This request has been blocked; the content must be served over HTTPS.", source: https://cs.pgammedia.com/iframe?pbjs=1&coppa=0 (0)
-09-29 18:50:57.470  1669  1715 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/08202014-metadata.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/08202014-metadata.txt
-09-29 18:50:57.480  1669  1715 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/08202014-pins.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/08202014-pins.txt
-09-29 18:50:57.533  1669  1715 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/05132026-sms-denylist-metadata.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/05132026-sms-denylist-metadata.txt
-09-29 18:50:57.540  1669  1715 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/05132026-sms-denylist.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/05132026-sms-denylist.txt
-09-29 18:50:59.378  3614  3624 I .timur363.vinyl: Background young concurrent copying GC freed 452072(16MB) AllocSpace objects, 0(0B) LOS objects, 46% free, 19MB/36MB, paused 22us,15us total 122.931ms
-09-29 18:51:02.272  4505  4646 E MendelPackageState: ctft: Timed out: ctef@37b8ef3[status=PENDING, info=[delegate=[ctaz@41c17b0[status=PENDING, info=[inputFuture=[byrl@14de629[status=PENDING, info=[bphe@701adae]]], exceptionType=[class bnmn], fallback=[chaj@136274f]]]]]]
-09-29 18:51:02.295  4505  4620 E AndroidFutures: ctft: Timed out: ctef@657e96b[status=PENDING, info=[delegate=[ctaz@4f2cc8[status=PENDING, info=[inputFuture=[byrl@c0b3161[status=PENDING, info=[bphe@bd5c486]]], exceptionType=[class bnmn], fallback=[chaj@136274f]]]]]]
-09-29 18:51:04.437  1415  1499 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 3  but was 2), resolution=null}]
-09-29 18:51:04.830  4505  4629 W RcsClientLib: java.lang.IllegalStateException: JibeService Not Initialized
-09-29 18:51:04.830  4505  4629 W RcsClientLib: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3065)
-09-29 18:51:04.830  4505  4629 W RcsClientLib: 	at android.os.Parcel.createException(Parcel.java:3041)
-09-29 18:51:04.830  4505  4629 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:3024)
-09-29 18:51:04.830  4505  4629 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:2966)
-09-29 18:51:04.830  4505  4629 W RcsClientLib: 	at com.google.android.aidl.BaseProxy.transactAndReadExceptionReturnVoid(PG:3)
-09-29 18:51:05.672  5270  5270 E BugleRcsEngine: [2] JibeService.onDestroy: JibeService: onDestroy() unregister factory exception: java.lang.IllegalArgumentException: Receiver not registered: com.google.android.ims.receiver.sip.DebugOptionsReceiver@51e7be4
+09-29 19:05:34.185  1424  1424 E GmsCoreLogger: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException
+09-29 19:05:34.185  1424  1424 E GmsCoreLogger: Caused by: java.util.concurrent.TimeoutException
+09-29 19:05:34.247  1043  1043 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:34.348   838   872 V WindowManagerShell: Transition requested: android.os.BinderProxy@80a5627 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity } baseActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} topActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} origActivity=null realActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} numActivities=1 lastActiveTime=38846 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@bd0c0d4} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{a9ae27d com.alananasss.kittytune.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+09-29 19:05:34.358   522  2140 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} with LAUNCH_SINGLE_TASK from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+09-29 19:05:34.452   522   552 I ActivityManager: Start proc 3396:io.github.timur363.vinyl/u0a192 for next-top-activity {io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}
+09-29 19:05:34.506  3396  3396 I .timur363.vinyl: Using CollectorTypeCC GC.
+09-29 19:05:34.507  3396  3396 W .timur363.vinyl: Unexpected CPU variant for x86: x86_64.
+09-29 19:05:34.507  3396  3396 W .timur363.vinyl: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+09-29 19:05:34.514  3396  3396 E .timur363.vinyl: Not starting debugger since process cannot load the jdwp agent.
+09-29 19:05:34.590  1770  1770 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.search.rendering.xuikit.device#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+09-29 19:05:34.590  1770  1770 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:34.619  1628  3077 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+09-29 19:05:34.650  3396  3396 D nativeloader: Configuring clns-6 for other apk /data/app/~~w_e__Qk5lXk2W8q9BaiCWw==/io.github.timur363.vinyl-TuNwrP8dXa0TqOudl4YXzQ==/base.apk. target_sdk_version=37, uses_libraries=, library_path=/data/app/~~w_e__Qk5lXk2W8q9BaiCWw==/io.github.timur363.vinyl-TuNwrP8dXa0TqOudl4YXzQ==/lib/x86_64:/data/app/~~w_e__Qk5lXk2W8q9BaiCWw==/io.github.timur363.vinyl-TuNwrP8dXa0TqOudl4YXzQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/io.github.timur363.vinyl
+09-29 19:05:34.660  3396  3396 V GraphicsEnvironment: ANGLE GameManagerService for io.github.timur363.vinyl: false
+09-29 19:05:34.660  3396  3396 V GraphicsEnvironment: io.github.timur363.vinyl is not listed in per-application setting
+09-29 19:05:34.689   522   539 V WindowManager: Sent Transition #6 createdAt=09-29 19:05:34.332 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity } baseActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} topActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} origActivity=null realActivity=ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} numActivities=1 lastActiveTime=38846 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{f86d340 Task{22a302e #8 type=standard A=10192:io.github.timur363.vinyl}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{445a279 com.alananasss.kittytune.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+09-29 19:05:34.690   522   539 V WindowManager:     info={id=6 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{f86d340 Task{22a302e #8 type=standard A=10192:io.github.timur363.vinyl}}} m=OPEN f=NONE leash=Surface(name=Task=8)/@0xd22baee sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{bbd3bbe Task{68756ea #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xf73536c sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
+09-29 19:05:34.733   522   807 I SdkSandboxManager: No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10192, mPackageName='io.github.timur363.vinyl, mAppProcessToken='null'}
+09-29 19:05:34.810   335   365 I netd    : networkAddInterface(101, eth0) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+09-29 19:05:34.810   522   762 W ConnectivityService: Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+09-29 19:05:34.811   335   365 I netd    : networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: eth0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+09-29 19:05:34.812   522   762 E ConnectivityService: Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+09-29 19:05:34.812   335   365 I netd    : networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: eth0, nextHop: 10.0.2.2, mtu: 1500}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+09-29 19:05:34.812   522   762 E ConnectivityService: Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+09-29 19:05:34.878  1770  2250 E cr_CronetUrlRequestContext: Exception in upload method
+09-29 19:05:34.945  3396  3396 E .timur363.vinyl: Failed to open APK '/data/resource-cache/com.android.systemui-neutral-jnHE.frro': Invalid file
+09-29 19:05:34.945  3396  3396 E .timur363.vinyl: Failed to open APK '/data/resource-cache/com.android.systemui-accent-3yJQ.frro': Invalid file
+09-29 19:05:34.945  3396  3396 E .timur363.vinyl: Failed to open APK '/data/resource-cache/com.android.systemui-dynamic-ozzP.frro': Invalid file
+09-29 19:05:34.949  3396  3396 W .timur363.vinyl: Entry not found
+09-29 19:05:34.989  3396  3495 I cr_VariationsUtils: Failed reading seed file "/data/user/0/io.github.timur363.vinyl/app_webview/variations_seed_new"
+09-29 19:05:34.989  3396  3495 I cr_VariationsUtils: Failed reading seed file "/data/user/0/io.github.timur363.vinyl/app_webview/variations_seed"
+09-29 19:05:35.162  1424  1497 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:35.322  1424  1497 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:35.322  1770  2257 W A       : DiscoverPrecheckException(precheckFailureReason=com.google.android.apps.search.googleapp.discover.w.a.c@d94c27f)
+09-29 19:05:35.335  1770  2250 W A       : DiscoverPrecheckException(precheckFailureReason=com.google.android.apps.search.googleapp.discover.w.a.c@d94c27f)
+09-29 19:05:35.336  1770  1770 W A       : com.google.android.apps.search.googleapp.discover.v.i: DiscoverPrecheckException(precheckFailureReason=com.google.android.apps.search.googleapp.discover.w.a.c@d94c27f)
+09-29 19:05:35.336  1770  1770 W A       : Caused by: DiscoverPrecheckException(precheckFailureReason=com.google.android.apps.search.googleapp.discover.w.a.c@d94c27f)
+09-29 19:05:35.361   522   552 I ActivityManager: Start proc 3516:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {io.github.timur363.vinyl/org.chromium.content.app.SandboxedProcessService0:0}
+09-29 19:05:35.488  1467  1503 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:35.522  1467  1503 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:35.963   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
+09-29 19:05:35.963   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
+09-29 19:05:35.963   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
+09-29 19:05:36.015   522   829 D CoreBackPreview: Window{8ea83b1 u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@972a9ed, mPriority=-1, mIsAnimationCallback=false}
+09-29 19:05:36.157  1424  3323 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:36.228  1424  3323 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:36.239  1043  1043 D CarrierSvcBindHelper: onPackageAdded: io.github.timur363.vinyl
+09-29 19:05:36.244  1043  1043 D CarrierSvcBindHelper: onPackageModified: io.github.timur363.vinyl
+09-29 19:05:36.254  1043  1329 D ImsResolver: maybeAddedImsService, packageName: io.github.timur363.vinyl
+09-29 19:05:36.255  1043  1329 D ImsResolver: maybeAddedImsService, packageName: io.github.timur363.vinyl
+09-29 19:05:36.529  1005  1025 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+09-29 19:05:36.541   522   550 E PackageManager: java.util.concurrent.TimeoutException: [Optimistic Bind] Didn't bind to resolver in time!
+09-29 19:05:36.542   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
+09-29 19:05:36.542   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
+09-29 19:05:36.542   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
+09-29 19:05:36.650  1467  3630 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+09-29 19:05:36.795  1043  1043 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:36.795  1043  1043 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:36.806  1043  1043 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:36.938  1785  2664 E FirebaseInstanceId: Topic sync or token retrieval failed on hard failure exceptions: AUTHENTICATION_FAILED. Won't retry the operation.
+09-29 19:05:37.039  1755  2363 E FirebaseInstanceId: Topic sync or token retrieval failed on hard failure exceptions: AUTHENTICATION_FAILED. Won't retry the operation.
+09-29 19:05:37.122  2565  3141 E FirebaseInstanceId: Topic sync or token retrieval failed on hard failure exceptions: AUTHENTICATION_FAILED. Won't retry the operation.
+09-29 19:05:37.188  1424  1494 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:37.222  1424  1494 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:37.302  1467  3731 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:37.378  3629  3774 W cr_AWNetworkFetcherTask: IOException during downloadToFile.
+09-29 19:05:37.378  3629  3774 W cr_AWNetworkFetcherTask: java.io.IOException: Cleartext HTTP traffic to edgedl.me.gvt1.com not permitted
+09-29 19:05:37.408   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
+09-29 19:05:37.408   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
+09-29 19:05:37.408   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
+09-29 19:05:37.468  1467  3731 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:37.705  1043  1043 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:37.759  1606  2298 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=3000, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=<unknown>, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=80000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/ringtones/Andromeda.ogg, _size=24973, album=ringtones, genre=null, is_alarm=0, title=Andromeda, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+09-29 19:05:37.759  1606  2298 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+09-29 19:05:37.790  2029  3828 E TaskWorkerFactory: java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
+09-29 19:05:37.806   522  2137 I WindowManager: finishDrawing of relaunch: Window{8ea83b1 u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity} 2882ms
+09-29 19:05:37.822   522   539 I ActivityTaskManager: Displayed io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity for user 0: +3s486ms
+09-29 19:05:37.869   522   897 W InputManager-JNI: Input channel object 'fd98f42 Splash Screen io.github.timur363.vinyl (client)' was disposed without first being removed with the input manager!
+09-29 19:05:38.373  1005  1025 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+09-29 19:05:38.459  1043  1043 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:38.459  1043  1043 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:38.784   522   594 D CoreBackPreview: Window{8ea83b1 u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}: Setting back callback null
+09-29 19:05:38.788   522  2197 W InputManager-JNI: Input channel object '8ea83b1 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity (client)' was disposed without first being removed with the input manager!
+09-29 19:05:39.083  1770  2156 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:05:39.091  1785  2113 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
+09-29 19:05:39.091  1785  2113 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
+09-29 19:05:39.091  1785  2113 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
+09-29 19:05:39.091  1785  2113 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
+09-29 19:05:39.091  1785  2113 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:3002)
+09-29 19:05:39.091  1785  2113 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
+09-29 19:05:39.101   522   829 D CoreBackPreview: Window{d267a52 u0 io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@e634429, mPriority=-1, mIsAnimationCallback=false}
+09-29 19:05:39.247  1043  1043 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:39.401  1043  1043 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-29 19:05:39.498   522  2197 I ImeTracker: io.github.timur363.vinyl:98f6d5f1: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+09-29 19:05:39.498   522  2197 I ImeTracker: io.github.timur363.vinyl:98f6d5f1: onCancelled at PHASE_SERVER_SHOULD_HIDE
+09-29 19:05:39.543  1524  1524 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=io.github.timur363.vinyl fieldId=0 fieldName=null extras=null}, false)
+09-29 19:05:39.650  1467  3715 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:39.851   522  2185 D ConnectivityService: requestNetwork for uid/pid:10192/3396 activeRequest: null callbackRequest: 104 [NetworkRequest [ REQUEST id=105, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+09-29 19:05:39.876   522   755 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=105, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
+09-29 19:05:39.877   522   755 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=105, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
+09-29 19:05:39.877   522   755 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=105, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
+09-29 19:05:39.877   522   755 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=105, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: io.github.timur363.vinyl UnderlyingNetworks: Null] ]
+09-29 19:05:40.083   522  2196 I MediaSessionStack: addSession to bottom of stack | record: io.github.timur363.vinyl/androidx.media3.session.id.KittyTuneSession (userId=0)
+09-29 19:05:40.171  1026  1026 D MediaPlayerList: onActiveSessionsChanged: controller: io.github.timur363.vinyl
+09-29 19:05:40.171  1026  1026 I MediaPlayerList: Adding wrapped media player: io.github.timur363.vinyl at key: 2
+09-29 19:05:40.172  1026  1026 D MediaPlayerList: onActiveSessionsChanged: controller: io.github.timur363.vinyl
+09-29 19:05:40.172  1026  1026 I MediaPlayerList: Adding wrapped media player: io.github.timur363.vinyl at key: 2
+09-29 19:05:40.326  1424  2315 W FontLog : java.lang.IllegalStateException: attempt to re-open an already-closed object: SQLiteDatabase: /data/user/0/com.google.android.gms/databases/metadata.db
+09-29 19:05:40.385  1424  1940 W FontLog : java.lang.IllegalStateException: Cannot perform this operation because the connection pool has been closed.
+09-29 19:05:40.606  1632  1632 E VS.BluetoothShim: java.lang.NoSuchMethodException: android.bluetooth.BluetoothHeadset.startScoUsingVirtualVoiceCall [class android.bluetooth.BluetoothDevice]
+09-29 19:05:40.724  3396  3396 D KittyTuneAA: onConnectAsync: pkg=io.github.timur363.vinyl, isAuto=false
+09-29 19:05:40.725  3396  3396 D KittyTuneAA: onPostConnect: pkg=io.github.timur363.vinyl, isAuto=false
+09-29 19:05:40.726  3396  3396 D KittyTuneAA: onConnectAsync: pkg=io.github.timur363.vinyl, isAuto=false
+09-29 19:05:40.726  3396  3396 D KittyTuneAA: onPostConnect: pkg=io.github.timur363.vinyl, isAuto=false
+09-29 19:05:40.767   839   839 I SafetyLabelChangedBroadcastReceiver: received broadcast packageName: io.github.timur363.vinyl, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+09-29 19:05:40.768  3396  3396 D KittyTuneAA: combine flow: auto=false, pref=true
+09-29 19:05:40.768  3396  3396 D KittyTuneAA: automotiveLyricsObserver: shouldRun=false
+09-29 19:05:40.858  1628  3003 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+09-29 19:05:40.917  1467  3272 E constellation: java.io.IOException: AUTHENTICATION_FAILED
+09-29 19:05:41.327  1467  3740 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:41.357  3396  4075 D ProfileInstaller: Installing profile for io.github.timur363.vinyl
+09-29 19:05:41.374  1424  3787 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:41.377  1424  3313 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:41.392   838  4071 W RingtonePlayer: java.io.IOException: setDataSource failed.: status=0x80000000
+09-29 19:05:41.404  1424  3313 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:41.529  1467  3740 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:41.600  1628  1628 I AiAiEcho: AppFetcherImplV2 updateApps package:[io.github.timur363.vinyl], userId:[0], reason:[package is added.].
+09-29 19:05:41.676  1424  3787 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:41.866  1628  1628 I AiAiEcho: AppFetcherImpl onPackageChanged io.github.timur363.vinyl.
+09-29 19:05:41.867  1628  2738 I AiAiEcho: AppIndexer Package:[io.github.timur363.vinyl] UserProfile:[0] Enabled:[true].
+09-29 19:05:41.867  1628  2738 I AiAiEcho: AppFetcherImplV2 updateApps package:[io.github.timur363.vinyl], userId:[0], reason:[package is updated.].
+09-29 19:05:41.913  1467  3075 W GCM-GMS : Failed to get registration: java.io.IOException: AUTHENTICATION_FAILED
+09-29 19:05:41.943  1628  2202 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+09-29 19:05:42.321  1043  1043 E PhoneInterfaceManager: isVoNrEnabled: CommandException: com.android.internal.telephony.CommandException: REQUEST_NOT_SUPPORTED
+09-29 19:05:42.321  1043  1043 E PhoneInterfaceManager: isVoNrEnabled: CommandException: com.android.internal.telephony.CommandException: REQUEST_NOT_SUPPORTED
+09-29 19:05:42.598  1044  1369 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+09-29 19:05:42.838   522   927 W FileUtils: android.system.ErrnoException: chmod failed: ENOENT (No such file or directory)
+09-29 19:05:42.945  1044  1369 E HardwareInfoFeatureProviderImpl: java.lang.NumberFormatException: For input string: "E"
+09-29 19:05:43.034  1424  3788 E bwel    : java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:43.328  1424  1941 E dlpn    : RuntimeException while executing runnable dlqc{qze@fb72cd0} with executor MoreExecutors.directExecutor()
+09-29 19:05:43.328  1424  1941 E dlpn    : java.lang.NullPointerException: Attempt to get length of null array
+09-29 19:05:44.092  1424  4070 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:44.817  4317  4378 E IndexablesProvider: Provider querying exception:
+09-29 19:05:44.817  4317  4378 E IndexablesProvider: java.lang.IllegalStateException: We should initialize FormFactorUtils before getting instance.
+09-29 19:05:44.877  1467  3740 W GCM-GMS : Failed to get direct boot token: java.io.IOException: AUTHENTICATION_FAILED
+09-29 19:05:45.518  1424  4070 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:45.629  4288  4455 W BugleRcs: android.content.pm.PackageManager$NameNotFoundException: com.google.android.ims
+09-29 19:05:45.790  3396  3405 W .timur363.vinyl: Cleared Reference was only reachable from finalizer (only reported once)
+09-29 19:05:45.798  3396  3405 I .timur363.vinyl: Background concurrent copying GC freed 282286(10234KB) AllocSpace objects, 45(1836KB) LOS objects, 49% free, 14MB/28MB, paused 36us,15us total 225.920ms
+09-29 19:05:46.863  1467  3220 I BlockstoreStorage: Clearing Blockstore Data for package io.github.timur363.vinyl [CONTEXT service_id=258 ]
+09-29 19:05:47.227  1424  3497 W SemanticLocation: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 4 milliseconds, 374862 nanoseconds delay) for dlnx@b263d5b[status=PENDING, info=[function=[bzrs@55c09f8]]]
+09-29 19:05:48.172  1424  3497 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/default_model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+09-29 19:05:48.172  1424  3497 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:48.218  1424  3497 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+09-29 19:05:48.218  1424  3497 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:48.360  1424  3497 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+09-29 19:05:48.360  1424  3497 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:48.448  3396  4554 I OkHttp  : y":"all","genre":"Dance","has_downloads_left":false,"id":2393801466,"kind":"track","label_name":"Armada Music","last_modified":"2026-09-03T15:43:45Z","license":"all-rights-reserved","likes_count":166,"permalink":"greece-2000","permalink_url":"https://soundcloud.com/mikewilliamsdj/greece-2000","playback_count":2842,"public":true,"publisher_metadata":{"id":2393801466,"urn":"soundcloud:tracks:2393801466","artist":"Mike Williams, Three Drives, Three Drives On A Vinyl, ANTICALM","album_title":"Greece 2000","contains_music":true,"upc_or_ean":"8718522633744","isrc":"NLF712605667","explicit":false,"p_line":"1997 Armada Music B.V.","p_line_for_display":"℗ 1997 Armada Music B.V.","c_line":"2026 Armada Music B.V.","c_line_for_display":"© 2026 Armada Music B.V.","writer_composer":"Ton van Empel, Erik de Koning","release_title":"Greece 2000"},"purchase_title":null,"purchase_url":null,"release_date":"2026-09-18T00:00:00Z","reposts_count":13,"secret_token":null,"sharing":"public","state":"finished","streamable":true,"tag_list":"\"Tech House\"","title":"Greece 2000","uri":"https://api.soundcloud.com/tracks/soundcloud%3Atracks%3A2393801466","urn":"soundcloud:tracks:2393801466","user_id":8681825,"visuals":null,"waveform_url":"https://wave.sndcdn.com/BxHdJ9jMzlW6_m.json","display_date":"2026-09-18T00:00:00Z","media":{"transcodings":[{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/52de5130-67ab-490f-973f-287afd6eac37/stream/cbc-encrypted-hls","preset":"aac_160k","duration":156410,"snipped":false,"format":{"protocol":"cbc-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/52de5130-67ab-490f-973f-287afd6eac37/stream/ctr-encrypted-hls","preset":"aac_160k","duration":156410,"snipped":false,"format":{"protocol":"ctr-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/1a1e5fca-9734-415c-84d6-4878f9b58b6d/stream/cbc-encrypted-hls","preset":"aac_96k","duration":156410,"snipped":false,"format":{"protocol":"cbc-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"lq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/1a1e5fca-9734-415c-84d6-4878f9b58b6d/stream/ctr-encrypted-hls","preset":"aac_96k","duration":156410,"snipped":false,"format":{"protocol":"ctr-encrypted-hls","mime_type":"audio/mp4; codecs=\"mp4a.40.2\""},"quality":"lq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/dafb8a9e-711f-4f02-abcc-35d079879184/stream/cbc-encrypted-hls","preset":"abr_sq","duration":156410,"snipped":false,"format":{"protocol":"cbc-encrypted-hls","mime_type":"audio/mpegurl"},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/dafb8a9e-711f-4f02-abcc-35d079879184/stream/ctr-encrypted-hls","preset":"abr_sq","duration":156410,"snipped":false,"format":{"protocol":"ctr-encrypted-hls","mime_type":"audio/mpegurl"},"quality":"sq","is_legacy_transcoding":false},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/f1f8404c-0e87-4a6d-bfdb-0745378cbd47/stream/hls","preset":"mp3_1_0","duration":156363,"snipped":false,"format":{"protocol":"hls","mime_type":"audio/mpeg"},"quality":"sq","is_legacy_transcoding":true},{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:2393801466/f1f8404c-0e87-4a6d-bfdb-0745378cbd47/stream/progressive","preset":"mp3_1_0","duration":156363,"snipped":false,"format":{"protocol":"progressive","mime_type":"audio/mpeg"},"quality":"sq","is_legacy_transcoding":true}]},"station_urn":"soundcloud:system-playlists:track-stations:2393801466","station_permalink":"track-stations:2393801466","track_authorization":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJnZW8iOiJVUyIsInN1YiI6IiIsInJpZCI6IjdkOWMwZDk4
+09-29 19:05:48.464  1467  4029 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:48.521  1467  4029 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:48.659  1606  2298 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=10170, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=<unknown>, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=192000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/ringtones/Perseus.ogg, _size=236343, album=ringtones, genre=null, is_alarm=0, title=Perseus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+09-29 19:05:48.659  1606  2298 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+09-29 19:05:48.662  1606  2298 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=3498, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=<unknown>, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=80000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/ringtones/CanisMajor.ogg, _size=31133, album=ringtones, genre=null, is_alarm=0, title=Canis Major, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+09-29 19:05:48.662  1606  2298 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+09-29 19:05:49.111  1424  2317 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:49.119  1467  3110 W PhenotypeRegOp: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:49.159  1424  2317 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:49.303   522  2185 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10132.xml: open failed: ENOENT (No such file or directory)
+09-29 19:05:49.303   522  2185 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:49.888   522  1609 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10132.xml: open failed: ENOENT (No such file or directory)
+09-29 19:05:49.888   522  1609 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:783)
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:05:49.917  1467  4516 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:05:50.231  1424  3136 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+09-29 19:05:50.428  1424  1486 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:50.543  1424  1486 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:50.581  1467  4516 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+09-29 19:05:51.058  1467  3110 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:51.138  1467  3110 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:05:51.201  1467  4512 W PeoplePU: java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ProxyGalProvider}
+09-29 19:05:51.201  1467  4512 W PeoplePU: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3061)
+09-29 19:05:51.201  1467  4512 W PeoplePU: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:05:51.201  1467  4512 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:05:51.201  1467  4512 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:05:51.201  1467  4512 W PeoplePU: Caused by: android.os.RemoteException: Remote stack trace:
+09-29 19:05:51.227  1467  4519 W PeoplePU: android.content.pm.PackageManager$NameNotFoundException: ComponentInfo{com.google.android.gms/com.google.android.gms.people.sync.focus.ContactsSyncAdapterService}
+09-29 19:05:51.765  1467  3219 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:51.968  1424  2317 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+09-29 19:05:51.968  1424  2317 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:52.013  1424  2317 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+09-29 19:05:52.013  1424  2317 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:52.797  1467  4688 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:53.491  1606  2298 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1720722121, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+09-29 19:05:53.491  1606  2298 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+09-29 19:05:53.620  1606  1780 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
+09-29 19:05:53.624  1606  1780 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
+09-29 19:05:55.918  1770  2250 E cr_CronetUrlRequestContext: Exception in upload method
+09-29 19:05:56.130  1043  1043 D CarrierSvcBindHelper: onPackageModified: io.github.timur363.vinyl
+09-29 19:05:56.162  1043  1329 D ImsResolver: maybeAddedImsService, packageName: io.github.timur363.vinyl
+09-29 19:05:56.355  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:05:56.378  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.telephony.CallsDefaultSubscriptionController
+09-29 19:05:56.378  1044  1369 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.telephony.CallsDefaultSubscriptionController.<init> [class android.content.Context, class java.lang.String]
+09-29 19:05:56.384  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.NetworkProviderSimsCategoryController
+09-29 19:05:56.384  1044  1369 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.NetworkProviderSimsCategoryController.<init> [class android.content.Context, class java.lang.String]
+09-29 19:05:56.405  1044  1369 E HardwareInfoFeatureProviderImpl: java.lang.NumberFormatException: For input string: "E"
+09-29 19:05:56.406  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+09-29 19:05:56.406  1044  1369 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+09-29 19:05:56.406  1044  1369 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+09-29 19:05:56.414  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+09-29 19:05:56.414  1044  1369 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+09-29 19:05:56.414  1044  1369 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+09-29 19:05:56.435  1628  1628 I AiAiEcho: AppFetcherImpl onPackageChanged io.github.timur363.vinyl.
+09-29 19:05:56.436  1628  2747 I AiAiEcho: AppIndexer Package:[io.github.timur363.vinyl] UserProfile:[0] Enabled:[true].
+09-29 19:05:56.436  1628  2747 I AiAiEcho: AppFetcherImplV2 updateApps package:[io.github.timur363.vinyl], userId:[0], reason:[package is updated.].
+09-29 19:05:56.465   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
+09-29 19:05:56.465   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
+09-29 19:05:56.465   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
+09-29 19:05:56.523   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MusicWidgetReceiver} won't be persisted.
+09-29 19:05:56.523   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.MiniMusicWidgetReceiver} won't be persisted.
+09-29 19:05:56.523   522   550 D AppWidgetServiceImpl: Provider info from ComponentInfo{io.github.timur363.vinyl/com.alananasss.kittytune.ui.widget.SearchWidgetReceiver} won't be persisted.
+09-29 19:05:56.532  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.accessibility.VibrationMainSwitchPreferenceController
+09-29 19:05:56.532  1044  1369 W SliceDataConverter: Caused by: java.lang.reflect.InvocationTargetException
+09-29 19:05:56.532  1044  1369 W SliceDataConverter: Caused by: java.lang.RuntimeException: Can't create handler inside thread Thread[binder:1044_4,5,main] that has not called Looper.prepare()
+09-29 19:05:56.839  1044  1369 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+09-29 19:05:56.887  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.telephony.CallsDefaultSubscriptionController
+09-29 19:05:56.887  1044  1369 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.telephony.CallsDefaultSubscriptionController.<init> [class android.content.Context, class java.lang.String]
+09-29 19:05:56.982  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.credentials.CredentialManagerPreferenceController
+09-29 19:05:56.982  1044  1369 W SliceDataConverter: Caused by: java.lang.reflect.InvocationTargetException
+09-29 19:05:56.982  1044  1369 W SliceDataConverter: Caused by: java.lang.RuntimeException: Can't create handler inside thread Thread[binder:1044_4,5,main] that has not called Looper.prepare()
+09-29 19:05:56.983  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
+09-29 19:05:56.983  1044  1369 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
+09-29 19:05:56.983  1044  1369 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
+09-29 19:05:56.988  1044  1369 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.fuelgauge.batteryusage.BatteryChartPreferenceController
+09-29 19:05:56.988  1044  1369 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.fuelgauge.batteryusage.BatteryChartPreferenceController.<init> [class android.content.Context, class java.lang.String]
+09-29 19:05:58.056  1424  3497 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+09-29 19:05:58.056  1424  3497 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:58.381   522  1942 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10132.xml: open failed: ENOENT (No such file or directory)
+09-29 19:05:58.381   522  1942 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:783)
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:05:58.384  1467  4511 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:05:58.548  1467  3110 W PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:58.594  1424  3627 W PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:05:59.652  3396  3396 I chromium: [INFO:CONSOLE(0)] "Mixed Content: The page at 'https://m.soundcloud.com/discover?kittytune_refresh=1790708739887' was loaded over HTTPS, but requested an insecure image 'http://image8.pubmatic.com/AdServer/ImgSync?p=164125&gdpr=0&gdpr_consent=&pu=http%3A%2F%2Fimage4.pubmatic.com%2FAdServer%2FSPug%3Fp%3D164125%26pmc%3DPM_PMC%26pr%3Dhttps%253A%252F%252Fs.ad.smaato.net%252Fc%252F%253FdspId%253D1405%2526dspCookie%253D%2523PMUID%26gdpr%3D0%26gdpr_consent%3D'. This request has been blocked; the content must be served over HTTPS.", source: https://m.soundcloud.com/discover?kittytune_refresh=1790708739887 (0)
+09-29 19:05:59.716  1424  3787 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
+09-29 19:05:59.730   522  2079 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10132.xml: open failed: ENOENT (No such file or directory)
+09-29 19:05:59.730   522  2079 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:783)
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:05:59.737  1467  4029 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:05:59.775  1424  3005 W Looper  : java.lang.RuntimeException: Handler (acdu) {7d330ad} sendMessageAtTime() called with no mQueue
+09-29 19:06:00.237  5133  5219 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:06:00.479  1424  3056 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 1  but was 0), resolution=null}]
+09-29 19:06:00.550  1467  3110 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:06:00.600  1424  3627 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+09-29 19:06:00.649  1424  4224 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
+09-29 19:06:00.742  1467  3219 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:06:00.753  3396  3396 I chromium: [INFO:CONSOLE(1)] "Mixed Content: The page at 'https://m.soundcloud.com/discover?kittytune_refresh=1790708739887' was loaded over HTTPS, but requested an insecure image 'http://rtb2-useast.delivrdsp.ai/sync?exchange=1378&r=https%3A%2F%2Fdsum-sec.casalemedia.com%2Fcrum%3Fcm_dsp_id%3D282%26external_user_id%3D%7BUID%7D&us_privacy='. This request has been blocked; the content must be served over HTTPS.", source: https://ssum-sec.casalemedia.com/usermatch?d=https%3A%2F%2Fm.soundcloud.com%2F&s=184674&cb=https%3A%2F%2Fcdn.indexww.com%2Fht%2Fhtw-pixel.gif%3F&C=1 (1)
+09-29 19:06:00.784  1467  3219 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:06:01.122  4288  4422 W RcsClientLib: java.lang.IllegalStateException: JibeService Not Initialized
+09-29 19:06:01.122  4288  4422 W RcsClientLib: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3065)
+09-29 19:06:01.122  4288  4422 W RcsClientLib: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:06:01.122  4288  4422 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:06:01.122  4288  4422 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:06:01.122  4288  4422 W RcsClientLib: 	at com.google.android.aidl.BaseProxy.transactAndReadExceptionReturnVoid(PG:3)
+09-29 19:06:01.416  1424  3056 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.dialershared.directboot#com.google.android.dialer(change count changed - expected 2  but was 1), resolution=null}]
+09-29 19:06:01.623  4288  4422 W RcsClientLib: java.lang.IllegalStateException: JibeService Not Initialized
+09-29 19:06:01.623  4288  4422 W RcsClientLib: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3065)
+09-29 19:06:01.623  4288  4422 W RcsClientLib: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:06:01.623  4288  4422 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:06:01.623  4288  4422 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:06:01.623  4288  4422 W RcsClientLib: 	at com.google.android.aidl.BaseProxy.transactAndReadExceptionReturnVoid(PG:3)
+09-29 19:06:01.827  1424  3497 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:06:01.928  1424  3497 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:06:02.416  1770  2156 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:02.643  5441  5441 E BugleRcsEngine: [2] JibeService.onDestroy: JibeService: onDestroy() unregister factory exception: java.lang.IllegalArgumentException: Receiver not registered: com.google.android.ims.receiver.sip.DebugOptionsReceiver@b104299
+09-29 19:06:02.928  1424  3056 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.apps.dynamite.device#com.google.android.gm(change count changed - expected 1  but was 0), resolution=null}]
+09-29 19:06:03.006  1424  3056 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.libraries.communications.conference.device#com.google.android.gm(change count changed - expected 2  but was 0), resolution=null}]
+09-29 19:06:03.567  1424  3056 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging.auto#com.google.android.apps.messaging(change count changed - expected 2  but was 0), resolution=null}]
+09-29 19:06:03.604  1424  1497 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.libraries.performance.primes#com.google.android.apps.messaging(change count changed - expected 2  but was 0), resolution=null}]
+09-29 19:06:03.854  1424  3056 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.inputmethod.latin#com.google.android.inputmethod.latin(change count changed - expected 2  but was 1), resolution=null}]
+09-29 19:06:04.061  3396  3396 I chromium: [INFO:CONSOLE(0)] "Mixed Content: The page at 'https://m.soundcloud.com/discover?kittytune_refresh=1790708739887' was loaded over HTTPS, but requested an insecure image 'http://visitor-pgammedia.omnitagjs.com/visitor/%5BRED%5D?visitor=772a7b4b-2d52-4ef8-a6fe-3d51ec2e4593'. This request has been blocked; the content must be served over HTTPS.", source: https://cs.pgammedia.com/iframe?pbjs=1&coppa=0 (0)
+09-29 19:06:04.313  4288  5459 W RcsClientLib: java.lang.IllegalStateException: JibeService Not Initialized
+09-29 19:06:04.313  4288  5459 W RcsClientLib: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3065)
+09-29 19:06:04.313  4288  5459 W RcsClientLib: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:06:04.313  4288  5459 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:06:04.313  4288  5459 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:06:04.313  4288  5459 W RcsClientLib: 	at com.google.android.aidl.BaseProxy.transactAndReadExceptionReturnVoid(PG:3)
+09-29 19:06:04.830  5441  5441 E BugleRcsEngine: [2] JibeService.onDestroy: JibeService: onDestroy() unregister factory exception: java.lang.IllegalArgumentException: Receiver not registered: com.google.android.ims.receiver.sip.DebugOptionsReceiver@b104299
+09-29 19:06:06.433  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:06.602  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:06.991   522  1698 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:06.995   522  1698 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:06.995   522  1698 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:06.995   522  1698 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:07.313   522   522 E JobServiceContext: android.os.DeadObjectException
+09-29 19:06:07.400   522   522 E JobServiceContext: android.os.DeadObjectException
+09-29 19:06:07.454  5441  5441 W BugleRcsEngine: [2] RcsEngineProxyImpl.unregisterSelfServiceMessageReceiver: RcsEngineProxyImpl:[1f60712d-5c52]: Failed to unregister SelfServiceMessageReceiver.: java.lang.IllegalArgumentException: Receiver not registered: bsbl@4d6be76
+09-29 19:06:07.454  5441  5441 E BugleRcsEngine: [2] RcsEngineProxyImpl.unregisterReceivers: RcsEngineProxyImpl:[1f60712d-5c52]: Failed to unregister RecurringMetricsUploadReceiver.: java.lang.IllegalArgumentException: Receiver not registered: bsbi@12f30e4
+09-29 19:06:07.603  5441  5441 E BugleRcsEngine: [2] JibeService.onDestroy: JibeService: onDestroy() unregister factory exception: java.lang.IllegalArgumentException: Receiver not registered: com.google.android.ims.receiver.sip.DebugOptionsReceiver@b104299
+09-29 19:06:07.650  1628  2202 E AmbientMusicServiceMana: oxe: java.lang.reflect.InvocationTargetException
+09-29 19:06:07.650  1628  2202 E AmbientMusicServiceMana: Caused by: java.lang.reflect.InvocationTargetException
+09-29 19:06:07.650  1628  2202 E AmbientMusicServiceMana: Caused by: java.lang.IllegalStateException: No underlying SoundTriggerModule available
+09-29 19:06:07.764  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:08.099  1770  2128 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:08.242   522  2049 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:08.242   522  2049 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:08.242   522  2049 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:08.252   522  2049 E AppOps  : java.lang.SecurityException: Specified package "android" under uid 10179 but it is not
+09-29 19:06:08.491  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:08.657   522   624 W InputDispatcher: Not sending touch gesture to b673630 ActivityRecordInputSink io.github.timur363.vinyl/com.alananasss.kittytune.MainActivity because it has config NO_INPUT_CHANNEL
+09-29 19:06:09.104  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:09.350  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:09.534  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:09.737  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:10.282  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:11.013  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:11.574  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:11.985  1770  2156 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:12.494  1770  2156 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:13.191  1770  2128 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:13.460  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:13.912  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:14.177  3396  3405 I .timur363.vinyl: Background young concurrent copying GC freed 399232(14MB) AllocSpace objects, 0(0B) LOS objects, 42% free, 19MB/34MB, paused 19us,21us total 137.835ms
+09-29 19:06:14.657  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:15.106  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:15.559  1770  2128 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:16.146  1424  3136 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 3  but was 2), resolution=null}]
+09-29 19:06:16.151  1424  3056 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.libraries.notifications.platform#com.google.android.googlequicksearchbox(change count changed - expected 3  but was 2), resolution=null}]
+09-29 19:06:16.238  1606  1627 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/05132026-sms-denylist-metadata.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/05132026-sms-denylist-metadata.txt
+09-29 19:06:16.263  1606  1627 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/05132026-sms-denylist.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/05132026-sms-denylist.txt
+09-29 19:06:16.323  1606  1627 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/08202014-metadata.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/08202014-metadata.txt
+09-29 19:06:16.327  1606  1627 W ModernMediaScanner: Failed to visit /data/data/com.android.providers.downloads/cache/08202014-pins.txt: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/08202014-pins.txt
+09-29 19:06:16.568  1424  3136 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.libraries.subscriptions#com.google.android.gm(change count changed - expected 3  but was 2), resolution=null}]
+09-29 19:06:16.749  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:16.982  1467  4513 W PeoplePU: android.content.pm.PackageManager$NameNotFoundException: ComponentInfo{com.google.android.gms/com.google.android.gms.people.sync.focus.ContactsSyncAdapterService}
+09-29 19:06:16.985  1467  4513 W PeoplePU: java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ContactsSyncAdapterService}
+09-29 19:06:16.985  1467  4513 W PeoplePU: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3061)
+09-29 19:06:16.985  1467  4513 W PeoplePU: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:06:16.985  1467  4513 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:06:16.985  1467  4513 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:06:16.985  1467  4513 W PeoplePU: Caused by: android.os.RemoteException: Remote stack trace:
+09-29 19:06:16.993  1467  4513 W PeoplePU: java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ContactsSyncAdapterService}
+09-29 19:06:16.993  1467  4513 W PeoplePU: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3061)
+09-29 19:06:16.993  1467  4513 W PeoplePU: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:06:16.993  1467  4513 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:06:16.993  1467  4513 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:06:17.076  1467  4513 W PeoplePU: java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ProxyGalProvider}
+09-29 19:06:17.076  1467  4513 W PeoplePU: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3061)
+09-29 19:06:17.076  1467  4513 W PeoplePU: 	at android.os.Parcel.createException(Parcel.java:3041)
+09-29 19:06:17.076  1467  4513 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:3024)
+09-29 19:06:17.076  1467  4513 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2966)
+09-29 19:06:18.127  1770  2151 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:18.975  1770  2156 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:19.406  1424  1484 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:06:19.478  1424  1484 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+09-29 19:06:19.498  1770  2154 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+09-29 19:06:19.533  1424  1484 W GLSUser : [AppCertManager] Exception while requesting key: 
+09-29 19:06:19.533  1424  1484 W GLSUser : java.io.IOException: Invalid device key response.
