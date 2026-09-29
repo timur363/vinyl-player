@@ -119,6 +119,15 @@ fun LibraryScreen(
     var isFabMenuExpanded by remember { mutableStateOf(false) }
 
     BackHandler(enabled = isFabMenuExpanded) { isFabMenuExpanded = false }
+    val yandexLoggedIn = libraryViewModel.yandexAuth.isLoggedIn()
+    LaunchedEffect(libraryViewModel.activeLibrarySource, yandexLoggedIn) {
+        if (libraryViewModel.activeLibrarySource == LibrarySource.YANDEX && yandexLoggedIn &&
+            libraryViewModel.yandexPlaylists.isEmpty() && !libraryViewModel.isYandexLoading
+        ) {
+            libraryViewModel.loadYandexData()
+        }
+    }
+
     BackHandler(enabled = !isFabMenuExpanded && libraryViewModel.currentFolderId != null) {
         libraryViewModel.navigateUp()
     }
@@ -1785,7 +1794,9 @@ fun LibraryScreen(
                             onUploadsFilterClick = { showUploadsFilterSheet = true }
                         )
 
-                        if (libraryViewModel.activeLibrarySource == LibrarySource.VK && !libraryViewModel.vkTokenManager.isLoggedIn()) {
+                        val isYandexSource = libraryViewModel.activeLibrarySource == LibrarySource.YANDEX
+                        if ((libraryViewModel.activeLibrarySource == LibrarySource.VK && !libraryViewModel.vkTokenManager.isLoggedIn()) ||
+                            (isYandexSource && !libraryViewModel.yandexAuth.isLoggedIn())) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -1808,7 +1819,7 @@ fun LibraryScreen(
                                         ) {
                                             Box(contentAlignment = Alignment.Center) {
                                                 Icon(
-                                                    painter = androidx.compose.ui.res.painterResource(R.drawable.ic_vk),
+                                                    painter = androidx.compose.ui.res.painterResource(if (isYandexSource) R.drawable.ic_yandex_music else R.drawable.ic_vk),
                                                     contentDescription = null,
                                                     tint = MaterialTheme.colorScheme.primary,
                                                     modifier = Modifier.size(32.dp)
@@ -1817,14 +1828,14 @@ fun LibraryScreen(
                                         }
                                         Spacer(Modifier.height(16.dp))
                                         Text(
-                                            text = stringResource(R.string.lib_vk_not_connected),
+                                            text = stringResource(if (isYandexSource) R.string.lib_yandex_not_connected else R.string.lib_vk_not_connected),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             textAlign = TextAlign.Center
                                         )
                                         Spacer(Modifier.height(8.dp))
                                         Text(
-                                            text = stringResource(R.string.lib_vk_connect_desc),
+                                            text = stringResource(if (isYandexSource) R.string.lib_yandex_connect_desc else R.string.lib_vk_connect_desc),
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             textAlign = TextAlign.Center
@@ -1834,12 +1845,12 @@ fun LibraryScreen(
                                             onClick = { onProfileClick() },
                                             shapes = ButtonDefaults.shapes()
                                         ) {
-                                            Text(stringResource(R.string.lib_vk_connect_action))
+                                            Text(stringResource(if (isYandexSource) R.string.lib_yandex_connect_action else R.string.lib_vk_connect_action))
                                         }
                                     }
                                 }
                             }
-                        } else if (((libraryViewModel.isLoading && libraryViewModel.activeLibrarySource == LibrarySource.SOUNDCLOUD) || (libraryViewModel.isVkLoading && libraryViewModel.activeLibrarySource == LibrarySource.VK)) && libraryViewModel.displayedItems.isEmpty() && folderId == null) {
+                        } else if (((libraryViewModel.isLoading && libraryViewModel.activeLibrarySource == LibrarySource.SOUNDCLOUD) || (libraryViewModel.isVkLoading && libraryViewModel.activeLibrarySource == LibrarySource.VK) || (libraryViewModel.isYandexLoading && libraryViewModel.activeLibrarySource == LibrarySource.YANDEX)) && libraryViewModel.displayedItems.isEmpty() && folderId == null) {
                             LibraryShimmerGrid(isGridLayout = libraryViewModel.isGridLayout)
                         } else if (folderId != null && libraryViewModel.displayedItems.isEmpty()) {
                             EmptyFolderView()
@@ -2082,6 +2093,7 @@ fun LibraryContentGrid(
                         val isYoutubeShortcut = permalink != null && permalink.startsWith("yt_radio:")
 
                         val navId = when {
+                            permalink != null && (permalink == "ya_likes" || permalink == "ya_wave" || permalink.startsWith("ya_playlist:")) -> permalink
                             isYoutubeShortcut -> android.net.Uri.encode(permalink!!)
                             item.playlist.urn?.startsWith("spotify:") == true -> item.playlist.urn!!
                             permalink?.contains("spotify.com/playlist/") == true -> {
@@ -2200,6 +2212,7 @@ fun LibrarySourceSelector(
             val iconRes = when (selectedSource) {
                 LibrarySource.SOUNDCLOUD -> R.drawable.ic_soundcloud
                 LibrarySource.VK -> R.drawable.ic_vk
+                LibrarySource.YANDEX -> R.drawable.ic_yandex_music
             }
             Icon(
                 painter = androidx.compose.ui.res.painterResource(iconRes),
@@ -2239,6 +2252,21 @@ fun LibrarySourceSelector(
                 onClick = {
                     haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
                     onSelect(LibrarySource.VK)
+                    isSourceMenuExpanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.lib_source_yandex)) },
+                leadingIcon = {
+                    Icon(
+                        painter = androidx.compose.ui.res.painterResource(R.drawable.ic_yandex_music),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                onClick = {
+                    haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
+                    onSelect(LibrarySource.YANDEX)
                     isSourceMenuExpanded = false
                 }
             )

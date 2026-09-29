@@ -262,6 +262,22 @@
                         return@run url?.let { ResolvedStream(it) }
                     }
 
+                    if (com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(track)) {
+                        Log.d(TAG, "Resolving Yandex Music track: ${track.title}")
+                        val yaUrl = com.alananasss.kittytune.data.yandex.YandexMusic.resolveStream(context, track)
+                        if (yaUrl != null) {
+                            return@run ResolvedStream(yaUrl)
+                        }
+                        if (PlayerPreferences(context).getYouTubeFallbackEnabled()) {
+                            val fallbackUrl = resolveViaNewPipe(track)
+                            if (fallbackUrl != null) {
+                                return@run ResolvedStream(fallbackUrl)
+                            }
+                        }
+                        Log.w(TAG, "Could not resolve a Yandex stream for: ${track.title}")
+                        return@run null
+                    }
+
                     if (track.source == "vk") {
                         Log.d(TAG, "Resolving VKontakte track: ${track.title} (${track.id})")
                         val vkUrl = com.alananasss.kittytune.data.vk.VkRepository.resolveStream(context, track)

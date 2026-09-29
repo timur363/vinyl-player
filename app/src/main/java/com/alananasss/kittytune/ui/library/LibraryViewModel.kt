@@ -46,7 +46,7 @@ import com.alananasss.kittytune.data.local.LibraryItemMeta
 import com.alananasss.kittytune.data.local.toTrack
 
 enum class LibrarySource {
-    SOUNDCLOUD, VK
+    SOUNDCLOUD, VK, YANDEX
 }
 
 sealed class LibraryItem(open val timestamp: Long, open val key: String, open val isPinned: Boolean = false) {
@@ -76,7 +76,9 @@ sealed class LibraryItem(open val timestamp: Long, open val key: String, open va
     companion object {
         fun getPlaylistCanonicalKey(playlist: Playlist): String {
             val permalink = playlist.permalinkUrl
-            return if (permalink != null && permalink.startsWith("vk_playlist:")) {
+            return if (permalink != null && (permalink.startsWith("ya_playlist:") || permalink == "ya_likes" || permalink == "ya_wave")) {
+                permalink
+            } else if (permalink != null && permalink.startsWith("vk_playlist:")) {
                 permalink
             } else if (permalink != null && permalink == "vk_likes") {
                 "vk_likes"
@@ -104,6 +106,12 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     val vkTracks = mutableStateListOf<Track>()
     val vkPlaylists = mutableStateListOf<com.alananasss.kittytune.data.vk.VkPlaylist>()
     var isVkLoading by mutableStateOf(false)
+
+    val yandexAuth = com.alananasss.kittytune.data.yandex.YandexAuth(application)
+    val yandexLikedCount = mutableStateOf(0)
+    val yandexPlaylists = mutableStateListOf<com.alananasss.kittytune.data.yandex.YandexPlaylistInfo>()
+    var isYandexLoading by mutableStateOf(false)
+    var yandexError by mutableStateOf<String?>(null)
 
     var userProfile by mutableStateOf<User?>(null)
     val likedTracks = mutableStateListOf<Track>()
@@ -160,6 +168,34 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
         if (source == LibrarySource.VK) {
             loadVkData()
         }
+        if (source == LibrarySource.YANDEX) {
+            loadYandexData()
+        }
+    }
+
+    fun loadYandexData() {
+        if (!yandexAuth.isLoggedIn()) {
+            yandexPlaylists.clear()
+            yandexLikedCount.value = 0
+            return
+        }
+        viewModelScope.launch {
+            isYandexLoading = true
+            yandexError = null
+            try {
+                val ya = com.alananasss.kittytune.data.yandex.YandexMusic
+                val playlists = ya.playlists(app)
+                val likedCount = runCatching { ya.likedTrackIds(app).size }.getOrDefault(0)
+                yandexPlaylists.clear()
+                yandexPlaylists.addAll(playlists)
+                yandexLikedCount.value = likedCount
+            } catch (e: Exception) {
+                e.printStackTrace()
+                yandexError = e.message
+            } finally {
+                isYandexLoading = false
+            }
+        }
     }
 
     fun loadVkData(forceRefresh: Boolean = false) {
@@ -191,6 +227,62 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
 
     val displayedItems: List<LibraryItem>
         get() {
+            if (activeLibrarySource == LibrarySource.YANDEX) {
+                if (!yandexAuth.isLoggedIn()) return emptyList()
+                val owner = User(yandexAuth.uid, yandexAuth.displayName.ifBlank { "Яндекс Музыка" }, null)
+                val items = mutableListOf<LibraryItem>()
+                items.add(
+                    LibraryItem.PlaylistItem(
+                        Playlist(
+                            id = -310L,
+                            title = app.getString(R.string.lib_yandex_wave),
+                            artworkUrl = null,
+                            calculatedArtworkUrl = null,
+                            trackCount = null,
+                            user = owner,
+                            tracks = null,
+                            permalinkUrl = "ya_wave"
+                        ),
+                        System.currentTimeMillis(), "ya_wave", false
+                    )
+                )
+                items.add(
+                    LibraryItem.PlaylistItem(
+                        Playlist(
+                            id = -300L,
+                            title = app.getString(R.string.lib_yandex_liked),
+                            artworkUrl = null,
+                            calculatedArtworkUrl = null,
+                            trackCount = yandexLikedCount.value,
+                            user = owner,
+                            tracks = null,
+                            permalinkUrl = "ya_likes"
+                        ),
+                        System.currentTimeMillis(), "ya_likes", false
+                    )
+                )
+                yandexPlaylists.forEach { pl ->
+                    val key = "ya_playlist:${pl.ownerUid}_${pl.kind}"
+                    items.add(
+                        LibraryItem.PlaylistItem(
+                            Playlist(
+                                id = -(400_000L + pl.kind),
+                                title = pl.title,
+                                artworkUrl = pl.coverUrl,
+                                calculatedArtworkUrl = null,
+                                trackCount = pl.trackCount,
+                                user = owner,
+                                tracks = null,
+                                permalinkUrl = key
+                            ),
+                            System.currentTimeMillis(), key, false
+                        )
+                    )
+                }
+                return if (searchQuery.isBlank()) items else items.filter { item ->
+                    item !is LibraryItem.PlaylistItem || item.playlist.title?.contains(searchQuery, ignoreCase = true) == true
+                }
+            }
             if (activeLibrarySource == LibrarySource.VK) {
                 if (!vkTokenManager.isLoggedIn()) return emptyList()
                 val vkItems = mutableListOf<LibraryItem>()

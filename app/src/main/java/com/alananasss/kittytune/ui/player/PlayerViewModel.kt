@@ -1268,7 +1268,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
                             if (autoPlayEnabled || isYoutube) {
                                 viewModelScope.launch {
                                     val youtubeFallback = playerPrefs.getYouTubeFallbackEnabled()
-                                    if (isSpotify) {
+                                    if (com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(currentTrack) &&
+                                        com.alananasss.kittytune.data.yandex.YandexAuth(context).isLoggedIn()
+                                    ) {
+                                        fetchAndQueueYandexWave()
+                                    } else if (isSpotify) {
                                         fetchAndQueueSpotifyRadio()
                                     } else if (isYoutube || (currentTrack?.source == "soundcloud" && youtubeFallback)) {
                                         fetchAndPlayYoutubeRadio()
@@ -2731,6 +2735,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         showCommentsSheet = false
         isPlayerExpanded = false
 
+        if (com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(track) || artist.id.startsWith("yandex:")) {
+            if (artist.name.isNotBlank()) resolveAndNavigateToArtist(artist.name)
+            return
+        }
+
         val isVk = track?.source == "vk"
             || track?.user?.urn?.startsWith("vk:") == true
             || track?.permalinkUrl?.contains("vk.com") == true
@@ -2757,6 +2766,20 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     fun navigateToTrackArtist(track: Track?) {
         if (track == null) return
+        if (com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(track)) {
+            val navigable = navigableArtists(track.artists)
+            if (navigable.size > 1) {
+                openSelectArtistDialog(navigable, track)
+                return
+            }
+            showDetailsSheet = false
+            showMenuSheet = false
+            showCommentsSheet = false
+            isPlayerExpanded = false
+            val name = track.artists?.firstOrNull()?.name ?: track.displayArtist
+            if (name.isNotBlank()) resolveAndNavigateToArtist(name)
+            return
+        }
         val navigable = navigableArtists(track.artists)
         if (navigable.size > 1) {
             openSelectArtistDialog(navigable, track)
@@ -2836,6 +2859,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     fun navigateToArtist(userId: Long) {
         val currentT = currentTrack
+        if (com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(currentT)) {
+            navigateToTrackArtist(currentT)
+            return
+        }
         if (currentT != null) {
             val navigable = navigableArtists(currentT.artists)
             if (navigable.size > 1) {
@@ -3766,7 +3793,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
                     viewModelScope.launch {
                         val youtubeFallback = playerPrefs.getYouTubeFallbackEnabled()
 
-                        if (isSpotify) {
+                        if (com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(currentTrack) &&
+                            com.alananasss.kittytune.data.yandex.YandexAuth(context).isLoggedIn()
+                        ) {
+                            fetchAndQueueYandexWave()
+                        } else if (isSpotify) {
                             fetchAndQueueSpotifyRadio()
                         } else if (isYoutube || (currentTrack?.source == "soundcloud" && youtubeFallback)) {
                             fetchAndPlayYoutubeRadio()
@@ -3879,6 +3910,26 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
                 }
             }
         } catch (_: Exception) {
+        } finally {
+            isAutoplayRadioLoading = false
+        }
+    }
+
+    /** Keeps a Yandex queue going with "My Wave" tracks, like the official app does. */
+    private suspend fun fetchAndQueueYandexWave() {
+        isAutoplayRadioLoading = true
+        try {
+            val ya = com.alananasss.kittytune.data.yandex.YandexMusic
+            val played = _queue.filter { ya.isYandex(it) }
+            val next = ya.moreWave(context, played)
+            val tracksToAdd = next.filter { t -> _queue.none { it.id == t.id } }
+            if (tracksToAdd.isNotEmpty()) {
+                _queue.addAll(tracksToAdd)
+                _originalQueue.addAll(tracksToAdd)
+                updateQueueState()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         } finally {
             isAutoplayRadioLoading = false
         }

@@ -2810,5 +2810,25 @@
     <string name="pref_seek_wheel">Scrubbing sensitivity</string>
     <string name="pref_screensaver_title">Dim on inactivity</string>
     <string name="pref_screensaver_desc">Dims playback view after inactivity</string>
+    <string name="lib_source_yandex">Yandex Music</string>
+    <string name="lib_yandex_liked">My likes</string>
+    <string name="lib_yandex_wave">My Wave</string>
+    <string name="lib_yandex_not_connected">Yandex Music not connected</string>
+    <string name="lib_yandex_connect_desc">Sign in to see your likes, playlists and My Wave.</string>
+    <string name="lib_yandex_connect_action">Connect</string>
+    <string name="pref_account_yandex_title">Yandex Music</string>
+    <string name="pref_account_yandex_subtitle_guest">Not connected</string>
+    <string name="pref_account_yandex_subtitle_connected">Connected as %1$s</string>
+    <string name="yandex_login_title">Yandex Music</string>
+    <string name="yandex_login_intro">Sign in with your Yandex account. You will get a short code: open ya.ru/device on any device and enter it there. Your password is never typed into this app.</string>
+    <string name="yandex_login_start">Get a code</string>
+    <string name="yandex_login_code_label">Your code</string>
+    <string name="yandex_login_open">Open ya.ru/device</string>
+    <string name="yandex_login_waiting">Waiting for confirmation…</string>
+    <string name="yandex_login_expired">The code has expired. Try again.</string>
+    <string name="yandex_login_error">Sign-in failed: %1$s</string>
+    <string name="yandex_logout">Sign out</string>
+    <string name="yandex_account_plus">Yandex Plus: active</string>
+    <string name="yandex_account_no_plus">No Yandex Plus: only 30-second previews will play</string>
+    <string name="yandex_code_copied">Code copied</string>
 </resources>
-

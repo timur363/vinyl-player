@@ -29,6 +29,7 @@ fun AccountsSettingsScreen(
     onBackClick: () -> Unit,
     onNavigateToSoundCloud: () -> Unit,
     onNavigateToVk: () -> Unit,
+    onNavigateToYandex: () -> Unit = {},
     onNavigateToDiscord: () -> Unit,
     onNavigateToProviderOrder: () -> Unit,
     onNavigateToQobuz: () -> Unit,
@@ -44,6 +45,12 @@ fun AccountsSettingsScreen(
     val isScLoggedIn = !isGuest && tokenManager.hasAccessToken()
     val isDiscordLoggedIn = !prefs.getDiscordToken().isNullOrEmpty()
     val isVkLoggedIn = vkTokenManager.isLoggedIn()
+    val yandexAuth = remember { com.alananasss.kittytune.data.yandex.YandexAuth(context) }
+    val yandexSubtitle = if (yandexAuth.isLoggedIn()) {
+        stringResource(R.string.pref_account_yandex_subtitle_connected, yandexAuth.displayName)
+    } else {
+        stringResource(R.string.pref_account_yandex_subtitle_guest)
+    }
 
     val scSubtitle = if (isScLoggedIn) {
         val name = currentUser?.username
@@ -120,6 +127,15 @@ fun AccountsSettingsScreen(
                                 subtitle = scSubtitle,
                                 iconRes = R.drawable.ic_soundcloud,
                                 onClick = onNavigateToSoundCloud
+                            )
+                        },
+                        { shape ->
+                            SettingsItem(
+                                shape = shape,
+                                title = stringResource(R.string.pref_account_yandex_title),
+                                subtitle = yandexSubtitle,
+                                iconRes = R.drawable.ic_yandex_music,
+                                onClick = onNavigateToYandex
                             )
                         },
                         { shape ->

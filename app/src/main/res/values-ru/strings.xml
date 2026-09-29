@@ -2685,4 +2685,25 @@
     <string name="pref_seek_wheel">Чувствительность перемотки</string>
     <string name="pref_screensaver_title">Затемнять при бездействии</string>
     <string name="pref_screensaver_desc">Затемняет экран воспроизведения при отсутствии активности</string>
+    <string name="lib_source_yandex">Яндекс Музыка</string>
+    <string name="lib_yandex_liked">Мне нравится</string>
+    <string name="lib_yandex_wave">Моя волна</string>
+    <string name="lib_yandex_not_connected">Яндекс Музыка не подключена</string>
+    <string name="lib_yandex_connect_desc">Войди, чтобы видеть «Мне нравится», свои плейлисты и «Мою волну».</string>
+    <string name="lib_yandex_connect_action">Подключить</string>
+    <string name="pref_account_yandex_title">Яндекс Музыка</string>
+    <string name="pref_account_yandex_subtitle_guest">Не подключена</string>
+    <string name="pref_account_yandex_subtitle_connected">Вход выполнен: %1$s</string>
+    <string name="yandex_login_title">Яндекс Музыка</string>
+    <string name="yandex_login_intro">Вход через аккаунт Яндекса. Ты получишь короткий код: открой ya.ru/device на любом устройстве и введи его там. Пароль в это приложение вводить не нужно.</string>
+    <string name="yandex_login_start">Получить код</string>
+    <string name="yandex_login_code_label">Твой код</string>
+    <string name="yandex_login_open">Открыть ya.ru/device</string>
+    <string name="yandex_login_waiting">Жду подтверждения…</string>
+    <string name="yandex_login_expired">Код устарел. Попробуй ещё раз.</string>
+    <string name="yandex_login_error">Не удалось войти: %1$s</string>
+    <string name="yandex_logout">Выйти</string>
+    <string name="yandex_account_plus">Яндекс Плюс: активен</string>
+    <string name="yandex_account_no_plus">Нет Яндекс Плюса: будут играть только 30-секундные отрывки</string>
+    <string name="yandex_code_copied">Код скопирован</string>
 </resources>

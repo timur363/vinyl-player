@@ -1460,6 +1460,7 @@ fun MainScreen(
                             onBackClick = { navController.popBackStack() },
                             onNavigateToSoundCloud = { navController.navigate("soundcloud_account_settings") },
                             onNavigateToVk = { navController.navigate("vk_account_settings") },
+                            onNavigateToYandex = { navController.navigate("yandex_account") },
                             onNavigateToDiscord = { navController.navigate("discord_settings") },
                             onNavigateToProviderOrder = { navController.navigate("provider_order_settings") },
                             onNavigateToQobuz = { navController.navigate("qobuz_settings") },
@@ -1520,6 +1521,12 @@ fun MainScreen(
                         VkAccountSettingsScreen(
                             onBackClick = { navController.popBackStack() },
                             onNavigateToWebViewLogin = { navController.navigate("vk_login") }
+                        )
+                    }
+
+                    clippedComposable("yandex_account") {
+                        com.alananasss.kittytune.ui.profile.YandexAccountScreen(
+                            onBackClick = { navController.popBackStack() }
                         )
                     }
 

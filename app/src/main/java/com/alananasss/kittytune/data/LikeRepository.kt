@@ -111,6 +111,10 @@ object LikeRepository {
         com.alananasss.kittytune.data.sync.SyncLikes.record(track.id, liked = true, track = track)
 
         scope.launch {
+            if (com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(track)) {
+                com.alananasss.kittytune.data.yandex.YandexMusic.setLiked(appContext, track, liked = true)
+                return@launch
+            }
             if (track.source == "vk") {
                 val vkTokenManager = com.alananasss.kittytune.data.vk.VkTokenManager(appContext)
                 if (vkTokenManager.isLoggedIn()) {
@@ -183,10 +187,20 @@ object LikeRepository {
             track.id > 0 &&
                 track.source != "spotify" &&
                 track.source != "vk" &&
+                track.source != com.alananasss.kittytune.data.yandex.YandexMusic.SOURCE &&
                 track.user?.urn?.startsWith("spotify") != true &&
                 track.permalinkUrl?.contains("spotify") != true
         }
         val vkLikeable = toLike.filter { it.source == "vk" }
+        val yandexLikeable = toLike.filter { com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(it) }
+        if (yandexLikeable.isNotEmpty()) {
+            scope.launch {
+                for (track in yandexLikeable) {
+                    com.alananasss.kittytune.data.yandex.YandexMusic.setLiked(appContext, track, liked = true)
+                    delay(BULK_LIKE_BATCH_DELAY_MS)
+                }
+            }
+        }
         if (soundCloudLikeable.isEmpty() && vkLikeable.isEmpty()) return toLike.size
 
         scope.launch {
@@ -243,6 +257,7 @@ object LikeRepository {
     fun removeLike(trackId: Long) {
         val targetTrack = _likedTracks.value.find { it.id == trackId }
         val isVk = targetTrack?.source == "vk"
+        val isYandex = com.alananasss.kittytune.data.yandex.YandexMusic.isYandex(targetTrack)
         val isSpotify = targetTrack?.source == "spotify" || targetTrack?.user?.urn?.startsWith("spotify") == true
                 || (targetTrack?.permalinkUrl != null && targetTrack.permalinkUrl!!.contains("spotify")) || trackId > 1000000000000000L
 
@@ -252,6 +267,13 @@ object LikeRepository {
 
         saveLikedTracks()
         com.alananasss.kittytune.data.sync.SyncLikes.record(trackId, liked = false, track = null)
+
+        if (isYandex && targetTrack != null) {
+            scope.launch {
+                com.alananasss.kittytune.data.yandex.YandexMusic.setLiked(appContext, targetTrack, liked = false)
+            }
+            return
+        }
 
         if (isVk) {
             scope.launch {

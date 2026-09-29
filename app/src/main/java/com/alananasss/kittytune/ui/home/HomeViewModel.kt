@@ -77,7 +77,7 @@
     }
 
     enum class SearchSource {
-        SOUNDCLOUD, YOUTUBE, SPOTIFY, VK, DEEZER, TIDAL, QOBUZ
+        SOUNDCLOUD, YOUTUBE, SPOTIFY, VK, YANDEX, DEEZER, TIDAL, QOBUZ
     }
 
     class HomeViewModel(application: Application) : AndroidViewModel(application) {
@@ -122,6 +122,8 @@
         val searchResultsSpotifyPlaylists = mutableStateListOf<com.alananasss.kittytune.data.spotify.SpotifyPlaylist>()
         val searchResultsSpotifyArtists = mutableStateListOf<com.alananasss.kittytune.data.spotify.SpotifyArtist>()
         val searchResultsVk = mutableStateListOf<Track>()
+        val searchResultsYandex = mutableStateListOf<Track>()
+        private var yandexSearchPage = 0
 
         val searchResultsDeezerTracks = mutableStateListOf<Track>()
         val searchResultsDeezerAlbums = mutableStateListOf<Playlist>()
@@ -395,7 +397,7 @@
         private fun clearSearchResults() {
             searchResultsTracks.clear(); searchResultsArtists.clear(); searchResultsPlaylists.clear(); searchResultsYoutube.clear()
             searchResultsSpotify.clear(); searchResultsSpotifyAlbums.clear(); searchResultsSpotifyPlaylists.clear(); searchResultsSpotifyArtists.clear()
-            searchResultsVk.clear()
+            searchResultsVk.clear(); searchResultsYandex.clear()
             searchResultsDeezerTracks.clear(); searchResultsDeezerAlbums.clear(); searchResultsDeezerPlaylists.clear(); searchResultsDeezerArtists.clear()
             searchResultsTidalTracks.clear(); searchResultsTidalAlbums.clear(); searchResultsTidalPlaylists.clear(); searchResultsTidalArtists.clear()
             searchResultsQobuzTracks.clear(); searchResultsQobuzAlbums.clear(); searchResultsQobuzPlaylists.clear(); searchResultsQobuzArtists.clear()
@@ -410,6 +412,7 @@
                     SearchSource.YOUTUBE -> performYoutubeSearch(query)
                     SearchSource.SPOTIFY -> performSpotifySearch(query)
                     SearchSource.VK -> performVkSearch(query)
+                    SearchSource.YANDEX -> performYandexSearch(query)
                     SearchSource.DEEZER -> performDeezerSearch(query)
                     SearchSource.TIDAL -> performTidalSearch(query)
                     SearchSource.QOBUZ -> performQobuzSearch(query)
@@ -478,6 +481,19 @@
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+            }
+        }
+
+        private suspend fun performYandexSearch(query: String) {
+            try {
+                yandexSearchPage = 0
+                val results = com.alananasss.kittytune.data.yandex.YandexMusic.search(getApplication(), query, 0)
+                withContext(Dispatchers.Main) {
+                    searchResultsYandex.clear()
+                    searchResultsYandex.addAll(results)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
@@ -671,7 +687,15 @@
             viewModelScope.launch {
                 isSearchLoadingMore = true
                 try {
-                    if (activeSearchSource == SearchSource.VK) {
+                    if (activeSearchSource == SearchSource.YANDEX) {
+                        if (searchQuery.isNotBlank() && searchResultsYandex.isNotEmpty()) {
+                            val next = com.alananasss.kittytune.data.yandex.YandexMusic.search(getApplication(), searchQuery, yandexSearchPage + 1)
+                            if (next.isNotEmpty()) {
+                                yandexSearchPage += 1
+                                searchResultsYandex.addAll(next.filter { nt -> searchResultsYandex.none { it.id == nt.id } })
+                            }
+                        }
+                    } else if (activeSearchSource == SearchSource.VK) {
                         val currentCount = searchResultsVk.size
                         if (searchQuery.isNotBlank() && currentCount > 0) {
                             val vkApi = com.alananasss.kittytune.data.vk.VkApi(getApplication())

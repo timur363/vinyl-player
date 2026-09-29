@@ -249,6 +249,12 @@ fun PlaylistDetailScreen(
         when {
             playlistId.startsWith("station_artist:") -> "https://soundcloud.com/discover/sets/artist-stations:$currentIdLong"
             playlistId.startsWith("station:") -> "https://soundcloud.com/discover/sets/track-stations:$currentIdLong"
+            playlistId == "ya_likes" -> "https://music.yandex.ru/users/${com.alananasss.kittytune.data.yandex.YandexAuth(context).login}/tracks"
+            playlistId == "ya_wave" -> "https://music.yandex.ru/"
+            playlistId.startsWith("ya_playlist:") -> {
+                val parts = playlistId.removePrefix("ya_playlist:").split("_")
+                "https://music.yandex.ru/users/${parts.getOrNull(0).orEmpty()}/playlists/${parts.getOrNull(1).orEmpty()}"
+            }
             playlistId.startsWith("yt_radio:") -> {
                 val decodedUrl = Uri.decode(cleanIdStr)
                 val videoId = decodedUrl.substringAfter("v=").substringBefore("&")
@@ -536,6 +542,38 @@ fun PlaylistDetailScreen(
             val db = AppDatabase.getDatabase(context).downloadDao()
 
             when {
+                playlistId == "ya_likes" || playlistId == "ya_wave" || playlistId.startsWith("ya_playlist:") -> {
+                    val ya = com.alananasss.kittytune.data.yandex.YandexMusic
+                    val yaAuth = com.alananasss.kittytune.data.yandex.YandexAuth(context)
+                    defaultIcon = null
+                    playlistUser = User(yaAuth.uid, yaAuth.displayName.ifBlank { "Яндекс Музыка" }, null)
+                    try {
+                        when {
+                            playlistId == "ya_likes" -> {
+                                playlistTitle = context.getString(R.string.lib_yandex_liked)
+                                defaultIcon = Icons.Rounded.Favorite
+                                newTracks.addAll(ya.likedTracks(context))
+                            }
+                            playlistId == "ya_wave" -> {
+                                playlistTitle = context.getString(R.string.lib_yandex_wave)
+                                newTracks.addAll(ya.wavePlaylist(context))
+                            }
+                            else -> {
+                                val parts = playlistId.removePrefix("ya_playlist:").split("_")
+                                val owner = parts.getOrNull(0)?.toLongOrNull() ?: yaAuth.uid
+                                val kind = parts.getOrNull(1)?.toLongOrNull() ?: 0L
+                                val (info, plTracks) = ya.playlistTracks(context, owner, kind)
+                                playlistTitle = info?.title ?: "Плейлист"
+                                playlistCover = info?.coverUrl
+                                newTracks.addAll(plTracks)
+                            }
+                        }
+                        if (playlistCover == null) playlistCover = newTracks.firstOrNull()?.artworkUrl
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
                 playlistId == "vk_likes" -> {
                     playlistTitle = context.getString(R.string.lib_vk_saved_tracks)
                     defaultIcon = null

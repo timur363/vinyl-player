@@ -419,7 +419,7 @@ fun HomeScreen(
                                             onFilterSelected = homeViewModel::onFilterChanged
                                         )
                                     }
-                                    if (homeViewModel.activeSearchSource == SearchSource.YOUTUBE || homeViewModel.activeSearchSource == SearchSource.VK) {
+                                    if (homeViewModel.activeSearchSource == SearchSource.YOUTUBE || homeViewModel.activeSearchSource == SearchSource.VK || homeViewModel.activeSearchSource == SearchSource.YANDEX) {
                                         Spacer(Modifier.weight(1f))
                                     }
                                     Spacer(Modifier.width(8.dp))
@@ -1530,6 +1530,7 @@ fun SearchSourceSelector(
                 SearchSource.YOUTUBE -> R.drawable.ic_logo_youtube
                 SearchSource.SPOTIFY -> R.drawable.ic_logo_spotify
                 SearchSource.VK -> R.drawable.ic_vk
+                SearchSource.YANDEX -> R.drawable.ic_yandex_music
                 SearchSource.DEEZER -> R.drawable.ic_logo_deezer
                 SearchSource.TIDAL -> R.drawable.ic_logo_tidal
                 SearchSource.QOBUZ -> R.drawable.ic_logo_qobuz
@@ -1602,6 +1603,21 @@ fun SearchSourceSelector(
                 onClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onSelect(SearchSource.VK)
+                    isSourceMenuExpanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.lib_source_yandex)) },
+                leadingIcon = {
+                    Icon(
+                        painter = androidx.compose.ui.res.painterResource(R.drawable.ic_yandex_music),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onSelect(SearchSource.YANDEX)
                     isSourceMenuExpanded = false
                 }
             )
@@ -1866,7 +1882,8 @@ fun SearchResultsList(
             }
         }
 
-        SearchSource.VK -> {
+        SearchSource.VK, SearchSource.YANDEX -> {
+            val simpleResults = if (homeViewModel.activeSearchSource == SearchSource.YANDEX) homeViewModel.searchResultsYandex else homeViewModel.searchResultsVk
             val listState = rememberLazyListState()
             val shouldLoadMore = remember {
                 derivedStateOf {
@@ -1881,7 +1898,7 @@ fun SearchResultsList(
                 }
             }
 
-            if (homeViewModel.searchResultsVk.isEmpty()) {
+            if (simpleResults.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -1898,7 +1915,7 @@ fun SearchResultsList(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     val isScrolling = listState.isScrollInProgress
-                    itemsIndexed(homeViewModel.searchResultsVk) { index, track ->
+                    itemsIndexed(simpleResults) { index, track ->
                         StaggeredItem(index, key = homeViewModel.searchQuery, isScrolling = isScrolling) {
                             val isDownloaded = downloadedIds.contains(track.id)
                             TrackListItem(
