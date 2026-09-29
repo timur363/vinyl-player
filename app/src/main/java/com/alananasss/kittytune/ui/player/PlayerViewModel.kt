@@ -4703,6 +4703,99 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     fun isAudioFxPinned(fxId: String): Boolean = pinnedAudioFx.contains(fxId)
 
+    // ── Vinyl mode ───────────────────────────────────────────────────────────
+
+    private var vinylRampJob: kotlinx.coroutines.Job? = null
+
+    /** Turntable speed: speed and pitch move together, exactly (no rounding to 0.1). */
+    fun setVinylRpm(rpm: com.alananasss.kittytune.ui.player.vinyl.VinylSettings.Rpm) {
+        com.alananasss.kittytune.ui.player.vinyl.VinylSettings.setRpm(context, rpm)
+        effectsState = effectsState.copy(speed = rpm.speed, isPitchEnabled = true)
+        applyEffectsAndSave()
+    }
+
+    fun setVinylCrackle(enabled: Boolean) {
+        if (effectsState.isVinylLoFiEnabled != enabled) toggleVinylLoFi()
+    }
+
+    /**
+     * Play/pause like a turntable: the platter winds down to a stop, and winds back up on start,
+     * with pitch following speed. Falls back to a plain toggle when the effect is off.
+     */
+    fun vinylTogglePlayPause() {
+        if (!com.alananasss.kittytune.ui.player.vinyl.VinylSettings.spinUpDown) {
+            togglePlayPause()
+            return
+        }
+        vinylRampJob?.cancel()
+        val target = effectsState.speed.coerceIn(0.25f, 4f)
+        val stopping = player.isPlaying || playWhenReady
+        vinylRampJob = viewModelScope.launch {
+            val steps = 18
+            try {
+                if (stopping) {
+                    for (i in 1..steps) {
+                        val f = 1f - i.toFloat() / steps
+                        val sp = (target * f * f).coerceAtLeast(0.1f)
+                        player.playbackParameters = androidx.media3.common.PlaybackParameters(sp, sp)
+                        kotlinx.coroutines.delay(40)
+                    }
+                    togglePlayPause()
+                } else {
+                    player.playbackParameters = androidx.media3.common.PlaybackParameters(0.1f, 0.1f)
+                    togglePlayPause()
+                    for (i in 1..steps) {
+                        val f = i.toFloat() / steps
+                        val sp = (target * (1f - (1f - f) * (1f - f))).coerceAtLeast(0.1f)
+                        player.playbackParameters = androidx.media3.common.PlaybackParameters(sp, sp)
+                        kotlinx.coroutines.delay(35)
+                    }
+                }
+            } finally {
+                MusicManager.applyEffects(effectsState)
+            }
+        }
+    }
+
+    // Scratching: the record under the finger drives playback.
+    private var scratchWasPlaying = false
+    private var scratchAnchorPosition = 0L
+
+    fun vinylScratchStart() {
+        vinylRampJob?.cancel()
+        scratchWasPlaying = player.isPlaying
+        scratchAnchorPosition = player.currentPosition
+        player.playbackParameters = androidx.media3.common.PlaybackParameters(0.1f, 0.1f)
+    }
+
+    /**
+     * [degreesPerSecond] is how fast the finger turns the record, [deltaDegrees] how far it moved
+     * since the last call. Forward motion plays faster/higher like pushing a real record; backward
+     * motion rewinds in small jumps, which gives the rough "wicka" of a back-spin.
+     */
+    fun vinylScratchMove(deltaDegrees: Float, degreesPerSecond: Float) {
+        val rpm = com.alananasss.kittytune.ui.player.vinyl.VinylSettings.Rpm.RPM_33.rpm
+        val nominal = rpm / 60f * 360f
+        if (deltaDegrees >= 0f) {
+            val sp = (degreesPerSecond / nominal * effectsState.speed).coerceIn(0.1f, 4f)
+            player.playbackParameters = androidx.media3.common.PlaybackParameters(sp, sp)
+            if (!player.isPlaying) player.play()
+        } else {
+            // One revolution at 33⅓ rpm is 1.8 s of music.
+            val msPerDegree = 60_000f / rpm / 360f
+            val back = (-deltaDegrees * msPerDegree).toLong()
+            val pos = (player.currentPosition - back).coerceAtLeast(0L)
+            player.seekTo(pos)
+            player.playbackParameters = androidx.media3.common.PlaybackParameters(0.5f, 0.5f)
+        }
+    }
+
+    fun vinylScratchEnd() {
+        MusicManager.applyEffects(effectsState)
+        if (!scratchWasPlaying && player.isPlaying) player.pause()
+        if (scratchWasPlaying && !player.isPlaying) player.play()
+    }
+
     private fun applyEffectsAndSave() {
         MusicManager.applyEffects(effectsState); viewModelScope.launch(Dispatchers.IO) {
             playerPrefs.saveEffects(

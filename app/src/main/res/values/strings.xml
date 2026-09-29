@@ -2831,4 +2831,11 @@
     <string name="yandex_account_plus">Yandex Plus: active</string>
     <string name="yandex_account_no_plus">No Yandex Plus: only 30-second previews will play</string>
     <string name="yandex_code_copied">Code copied</string>
+    <string name="vinyl_mode_title">Vinyl</string>
+    <string name="vinyl_mode_exit">Leave vinyl mode</string>
+    <string name="vinyl_mode_switch">Vinyl player</string>
+    <string name="vinyl_mode_switch_desc">A spinning record instead of the usual player: 33⅓ / 45 / 78 speeds, needle crackle, wind-up and scratching</string>
+    <string name="vinyl_crackle">Needle crackle</string>
+    <string name="vinyl_spin">Wind up / stop</string>
+    <string name="vinyl_scratch">Scratch</string>
 </resources>

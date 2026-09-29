@@ -779,8 +779,11 @@ fun PlayerScreen(
         onDispose { viewModel.isDjBeatUiVisible = false }
     }
 
+    LaunchedEffect(Unit) { com.alananasss.kittytune.ui.player.vinyl.VinylSettings.load(context) }
     androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize()) {
-        when (playerDesign) {
+        if (com.alananasss.kittytune.ui.player.vinyl.VinylSettings.enabled) {
+            com.alananasss.kittytune.ui.player.vinyl.VinylPlayerScreen(viewModel, onClose)
+        } else when (playerDesign) {
             com.alananasss.kittytune.data.local.PlayerDesign.PIXEL_PLAYER -> {
                 com.alananasss.kittytune.ui.player.pixel.PixelPlayerScreen(viewModel, onClose)
             }

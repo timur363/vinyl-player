@@ -147,6 +147,33 @@ fun PlayerCustomizationScreen(
             contentPadding = PaddingValues(bottom = 180.dp)
         ) {
             item {
+                val vinylContext = androidx.compose.ui.platform.LocalContext.current
+                androidx.compose.runtime.LaunchedEffect(Unit) {
+                    com.alananasss.kittytune.ui.player.vinyl.VinylSettings.load(vinylContext)
+                }
+                SettingsGroup(
+                    title = stringResource(R.string.vinyl_mode_title),
+                    items = listOf(
+                        { shape ->
+                            SettingsItem(
+                                shape = shape,
+                                title = stringResource(R.string.vinyl_mode_switch),
+                                subtitle = stringResource(R.string.vinyl_mode_switch_desc),
+                                iconRes = R.drawable.ic_vinyl_record,
+                                hasSwitch = true,
+                                switchState = com.alananasss.kittytune.ui.player.vinyl.VinylSettings.enabled,
+                                onSwitchChange = { com.alananasss.kittytune.ui.player.vinyl.VinylSettings.setEnabled(vinylContext, it) },
+                                onClick = {
+                                    com.alananasss.kittytune.ui.player.vinyl.VinylSettings.setEnabled(
+                                        vinylContext, !com.alananasss.kittytune.ui.player.vinyl.VinylSettings.enabled
+                                    )
+                                }
+                            )
+                        }
+                    )
+                )
+            }
+            item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -2706,4 +2706,11 @@
     <string name="yandex_account_plus">Яндекс Плюс: активен</string>
     <string name="yandex_account_no_plus">Нет Яндекс Плюса: будут играть только 30-секундные отрывки</string>
     <string name="yandex_code_copied">Код скопирован</string>
+    <string name="vinyl_mode_title">Винил</string>
+    <string name="vinyl_mode_exit">Выйти из винилового режима</string>
+    <string name="vinyl_mode_switch">Виниловый плеер</string>
+    <string name="vinyl_mode_switch_desc">Крутящаяся пластинка вместо обычного плеера: скорости 33⅓ / 45 / 78, треск иглы, разгон и остановка, скретч</string>
+    <string name="vinyl_crackle">Треск иглы</string>
+    <string name="vinyl_spin">Разгон и стоп</string>
+    <string name="vinyl_scratch">Скретч</string>
 </resources>
