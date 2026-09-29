@@ -97,10 +97,12 @@ jobs:
           adb install -r -g out/*.apk
           adb logcat -c
           adb shell am start -W -n $PKG/com.alananasss.kittytune.MainActivity
-          sleep 30
+          sleep 15
+          adb exec-out screencap -p > screen1.png || true
+          sleep 15
           adb shell input tap 540 1200
           sleep 10
-          adb exec-out screencap -p > screen.png || true
+          adb exec-out screencap -p > screen2.png || true
           adb logcat -d > logcat.txt || true
           adb logcat -d -b crash > crash.txt || true
           if [ -z "$(adb shell pidof $PKG)" ] || grep -q "FATAL EXCEPTION" crash.txt logcat.txt; then
@@ -130,14 +132,22 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/upload-artifact@v4
+      - name: Publish test results to the ci-results branch
         if: always()
-        with:
-          name: smoke-test
-          path: |
-            screen.png
-            logcat.txt
-            crash.txt
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir ci && cd ci
+          git init -q
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          if git fetch -q --depth 1 origin ci-results; then git checkout -q -b ci-results FETCH_HEAD; else git checkout -q --orphan ci-results; fi
+          rm -rf latest && mkdir -p latest
+          cp ../screen*.png ../result.txt ../crash.txt latest/ 2>/dev/null || true
+          grep -iE "kittytune|vinyl|yandex|AndroidRuntime|FATAL|Exception" ../logcat.txt | tail -600 > latest/logcat-app.txt || true
+          echo "${{ github.sha }} run ${{ github.run_number }}" > latest/commit.txt
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "results run ${{ github.run_number }}" || true
+          git push -q origin ci-results
 
   release:
     name: Publish release
