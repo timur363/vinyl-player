@@ -94,6 +94,7 @@ fun VinylPlayerScreen(viewModel: PlayerViewModel, onClose: () -> Unit) {
     val track = viewModel.currentTrack
     var showEffects by remember { mutableStateOf(false) }
     var showQueue by remember { mutableStateOf(false) }
+    var showPresets by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -213,6 +214,12 @@ fun VinylPlayerScreen(viewModel: PlayerViewModel, onClose: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
             ) {
                 FilterChip(
+                    selected = VinylPresets.forTrack(track) != null,
+                    onClick = { showPresets = true },
+                    label = { Text(stringResource(R.string.vinyl_presets)) },
+                    colors = vinylChipColors()
+                )
+                FilterChip(
                     selected = viewModel.effectsState.isVinylLoFiEnabled,
                     onClick = { viewModel.setVinylCrackle(!viewModel.effectsState.isVinylLoFiEnabled) },
                     label = { Text(stringResource(R.string.vinyl_crackle)) },
@@ -243,6 +250,16 @@ fun VinylPlayerScreen(viewModel: PlayerViewModel, onClose: () -> Unit) {
         ) {
             AudioControlDock(viewModel)
             Spacer(Modifier.height(32.dp))
+        }
+    }
+    if (showPresets) {
+        com.alananasss.kittytune.ui.common.KittyModalBottomSheet(
+            onDismissRequest = { showPresets = false },
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ) {
+            PresetsSheet(viewModel)
+            Spacer(Modifier.height(24.dp))
         }
     }
     if (showQueue) {
@@ -472,6 +489,109 @@ private fun Turntable(viewModel: PlayerViewModel, artworkUrl: String?, modifier:
             // Counterweight
             val cw = Offset(pivot.x - ux * w * 0.07f, pivot.y - uy * w * 0.07f)
             drawCircle(Color(0xFF636366), radius = w * 0.03f, center = cw)
+        }
+    }
+}
+
+
+@Composable
+private fun PresetsSheet(viewModel: PlayerViewModel) {
+    val track = viewModel.currentTrack
+    var name by remember { mutableStateOf("") }
+    val remembered = VinylPresets.forTrack(track) != null
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            stringResource(R.string.vinyl_presets),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+
+        // Per-track memory
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.vinyl_remember_track), style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    stringResource(R.string.vinyl_remember_track_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            androidx.compose.material3.Switch(
+                checked = remembered,
+                enabled = track != null,
+                onCheckedChange = { on ->
+                    if (on) viewModel.rememberSoundForCurrentTrack() else viewModel.forgetSoundForCurrentTrack()
+                }
+            )
+        }
+
+        androidx.compose.material3.HorizontalDivider()
+
+        // Save current sound as a named preset
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            androidx.compose.material3.OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                singleLine = true,
+                label = { Text(stringResource(R.string.vinyl_preset_name)) },
+                modifier = Modifier.weight(1f)
+            )
+            androidx.compose.material3.Button(
+                onClick = {
+                    viewModel.savePreset(name)
+                    name = ""
+                },
+                enabled = name.isNotBlank()
+            ) { Text(stringResource(R.string.vinyl_preset_save)) }
+        }
+        Text(
+            stringResource(R.string.vinyl_preset_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        if (VinylPresets.presets.isEmpty()) {
+            Text(
+                stringResource(R.string.vinyl_presets_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        val crackleLabel = stringResource(R.string.vinyl_crackle)
+        VinylPresets.presets.toList().forEach { preset ->
+            androidx.compose.material3.Surface(
+                onClick = { viewModel.applyPreset(preset) },
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, top = 6.dp, bottom = 6.dp, end = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(preset.name, style = MaterialTheme.typography.titleMedium)
+                        val fx = preset.sound.effects
+                        val parts = buildList {
+                            add("×" + String.format(java.util.Locale.US, "%.2f", fx.speed))
+                            if (fx.isVinylLoFiEnabled) add(crackleLabel)
+                            if (fx.isBassBoostEnabled) add("Bass")
+                            if (preset.sound.equalizer.isEnabled) add("EQ")
+                        }
+                        Text(
+                            parts.joinToString(" · "),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    IconButton(onClick = { viewModel.deletePreset(preset) }) {
+                        Icon(Icons.Rounded.Close, contentDescription = null)
+                    }
+                }
+            }
         }
     }
 }

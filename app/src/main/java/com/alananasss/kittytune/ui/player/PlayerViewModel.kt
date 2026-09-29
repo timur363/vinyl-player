@@ -1196,6 +1196,19 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     init {
+        com.alananasss.kittytune.ui.player.vinyl.VinylPresets.load(getApplication())
+        com.alananasss.kittytune.ui.player.vinyl.VinylSettings.load(getApplication())
+        // Not Main.immediate: start after the whole view model is constructed.
+        viewModelScope.launch(Dispatchers.Main) {
+            var lastKey: String? = null
+            androidx.compose.runtime.snapshotFlow { currentTrack }.collect { t ->
+                val key = t?.let { com.alananasss.kittytune.ui.player.vinyl.VinylPresets.trackKey(it) }
+                if (key != lastKey) {
+                    lastKey = key
+                    onTrackChangedForSound(t)
+                }
+            }
+        }
         val filter = IntentFilter("com.alananasss.kittytune.ACTION_FORCE_UPDATE")
         ContextCompat.registerReceiver(context, syncReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
 
@@ -4754,6 +4767,69 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
             } finally {
                 MusicManager.applyEffects(effectsState)
             }
+        }
+    }
+
+    // ── Sound presets and per-track sound ───────────────────────────────────
+
+    /** The user's own sound, put back when leaving a track that had its own settings. */
+    private var soundBaseline: com.alananasss.kittytune.ui.player.vinyl.SoundSnapshot? = null
+
+    fun currentSound() = com.alananasss.kittytune.ui.player.vinyl.SoundSnapshot(effectsState, equalizerState)
+
+    private fun applySound(sound: com.alananasss.kittytune.ui.player.vinyl.SoundSnapshot, persist: Boolean) {
+        equalizerState = sound.equalizer
+        effectsState = sound.effects.copy(isEqualizerEnabled = sound.equalizer.isEnabled)
+        if (persist) {
+            applyEffectsAndSave()
+            applyEqualizerAndSave()
+        } else {
+            MusicManager.applyEffects(effectsState)
+            MusicManager.applyEqualizer(equalizerState)
+        }
+    }
+
+    fun savePreset(name: String) {
+        if (name.isBlank()) return
+        com.alananasss.kittytune.ui.player.vinyl.VinylPresets.addPreset(context, name.trim(), currentSound())
+    }
+
+    fun applyPreset(preset: com.alananasss.kittytune.ui.player.vinyl.SoundPreset) {
+        soundBaseline = null
+        applySound(preset.sound, persist = true)
+    }
+
+    fun deletePreset(preset: com.alananasss.kittytune.ui.player.vinyl.SoundPreset) {
+        com.alananasss.kittytune.ui.player.vinyl.VinylPresets.deletePreset(context, preset.name)
+    }
+
+    fun isSoundRememberedForCurrentTrack(): Boolean =
+        com.alananasss.kittytune.ui.player.vinyl.VinylPresets.forTrack(currentTrack) != null
+
+    fun rememberSoundForCurrentTrack() {
+        val t = currentTrack ?: return
+        if (soundBaseline == null) soundBaseline = playerPrefs.getLastEffects().let {
+            com.alananasss.kittytune.ui.player.vinyl.SoundSnapshot(it, playerPrefs.getEqualizerState())
+        }
+        com.alananasss.kittytune.ui.player.vinyl.VinylPresets.rememberForTrack(context, t, currentSound())
+    }
+
+    fun forgetSoundForCurrentTrack() {
+        val t = currentTrack ?: return
+        com.alananasss.kittytune.ui.player.vinyl.VinylPresets.forgetForTrack(context, t)
+        soundBaseline?.let { applySound(it, persist = false) }
+        soundBaseline = null
+    }
+
+    /** Called whenever the playing track changes. */
+    private fun onTrackChangedForSound(track: Track?) {
+        val own = com.alananasss.kittytune.ui.player.vinyl.VinylPresets.forTrack(track)
+        if (own != null) {
+            if (soundBaseline == null) soundBaseline = currentSound()
+            applySound(own, persist = false)
+        } else {
+            soundBaseline?.let { applySound(it, persist = false) }
+            soundBaseline = null
         }
     }
 

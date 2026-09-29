@@ -2713,4 +2713,11 @@
     <string name="vinyl_crackle">Треск иглы</string>
     <string name="vinyl_spin">Разгон и стоп</string>
     <string name="vinyl_scratch">Скретч</string>
+    <string name="vinyl_presets">Пресеты</string>
+    <string name="vinyl_remember_track">Запомнить для этого трека</string>
+    <string name="vinyl_remember_track_desc">Скорость, эффекты и эквалайзер будут включаться каждый раз, когда играет этот трек</string>
+    <string name="vinyl_preset_name">Название пресета</string>
+    <string name="vinyl_preset_save">Сохранить</string>
+    <string name="vinyl_preset_hint">Сохраняет текущую скорость, эффекты и эквалайзер. Нажми на пресет, чтобы включить его.</string>
+    <string name="vinyl_presets_empty">Пресетов пока нет</string>
 </resources>
